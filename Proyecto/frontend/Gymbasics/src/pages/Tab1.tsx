@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { IonButton, IonCard, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonPage, IonRow, IonTitle, IonToolbar } from '@ionic/react';
+import React from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
-import Customer from './extra/Customer';
-import { useHistory, useParams } from 'react-router';
-import { add, pencil,close } from 'ionicons/icons'
 
 const Tab1: React.FC = () => {
   return (

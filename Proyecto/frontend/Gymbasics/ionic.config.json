@@ -1,14 +1,7 @@
 {
-  "name": "Gymbasics",
+  "name": "GymBasics",
   "integrations": {
     "capacitor": {}
   },
-  "type": "react",
-  "lab": {
-    "servePlatforms": [
-      "ios",
-      "android",
-      "web"
-    ]
-  }
+  "type": "react"
 }

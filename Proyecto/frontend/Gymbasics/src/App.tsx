@@ -15,6 +15,7 @@ import { ellipse, square, triangle } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
+import CustomerEdit from './pages/extra/CustomerEdit';
 import Tab4 from './pages/extra/Tab4';
 
 /* Core CSS required for Ionic components to work properly */
@@ -35,7 +36,6 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import CustomerEdit from './pages/extra/CustomerEdit';
 
 setupIonicReact();
 
@@ -59,7 +59,6 @@ const App: React.FC = () => (
           <Route exact path="/">
             <Redirect to="/tab1" />
           </Route>
-
           <Route path="/tab4/:id" exact={true}>
               <CustomerEdit />
             </Route>
