@@ -12,11 +12,18 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ellipse, square, triangle } from 'ionicons/icons';
+
+//Pages
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import CustomerEdit from './pages/extra/CustomerEdit';
 import Tab4 from './pages/extra/Tab4';
+
+
+//Forms
+import RegisterForm from './forms/RegisterForm';
+import LoginForm from './forms/LoginForm';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -55,6 +62,12 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/tab4">
             <Tab4 />
+          </Route>
+          <Route path="/register">
+            <RegisterForm />
+          </Route>
+          <Route path="/login">
+            <LoginForm />
           </Route>
           <Route exact path="/">
             <Redirect to="/tab1" />
