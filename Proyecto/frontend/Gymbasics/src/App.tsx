@@ -19,6 +19,8 @@ import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import CustomerEdit from './pages/extra/CustomerEdit';
 import Tab4 from './pages/extra/Tab4';
+//Security
+import NotAuthorized from './pages/security/NotAuthorized';
 
 
 //Forms
@@ -43,60 +45,56 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import PrivateRoute from './pages/security/PrivateRoute';
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
-          </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
-          </Route>
-          <Route path="/tab3">
-            <Tab3 />
-          </Route>
-          <Route exact path="/tab4">
-            <Tab4 />
-          </Route>
-          <Route path="/register">
-            <RegisterForm />
-          </Route>
-          <Route path="/login">
-            <LoginForm />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/tab1" />
-          </Route>
-          <Route path="/tab4/:id" exact={true}>
-              <CustomerEdit />
-            </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab4" href="/tab4">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 4</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <AuthProvider>
+          <IonTabs>
+            <IonRouterOutlet>
+              {/**************** Rutas protegidas ****************/}
+              
+              <PrivateRoute path="/tab2" component={Tab2} />
+              <PrivateRoute path="/tab3" component={Tab3} />
+              <PrivateRoute path="/tab4" component={Tab4} />
+
+              {/**************** Rutas públicas ****************/}
+              <Route path="/tab1" component={Tab1} />
+              <Route path="/register" component={RegisterForm} />
+              <Route path="/login" component={LoginForm} />
+              <Route path="/NotAuthorized" component={NotAuthorized} />
+              <Route exact path="/">
+                <Redirect to="/tab1" />
+              </Route>
+            </IonRouterOutlet>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="tab1" href="/tab1">
+                <IonIcon aria-hidden="true" icon={triangle} />
+                <IonLabel>Tab 1</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab2" href="/tab2">
+                <IonIcon aria-hidden="true" icon={ellipse} />
+                <IonLabel>Tab 2</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab3" href="/tab3">
+                <IonIcon aria-hidden="true" icon={square} />
+                <IonLabel>Tab 3</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tab4" href="/tab4">
+                <IonIcon aria-hidden="true" icon={square} />
+                <IonLabel>Tab 4</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </AuthProvider>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;

@@ -2,20 +2,25 @@ import { analytics } from "ionicons/icons";
 import Customer from "./Customer";
 
 export async function searchCustomers() {
-
-    // eslint-disable-next-line prefer-const
-    let url = process.env.REACT_APP_API + 'customers';
-    // eslint-disable-next-line prefer-const
-    let response = await fetch(url, {
-        "method": 'GET',
-        "headers": {
-            "Content-Type": 'application/json',
-        }
-    })
+    const url = process.env.REACT_APP_API + 'customers';
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.error('Token no encontrado');
+      return null;
+    }
+  
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`, //JWT tokken en solicitud que requiere autenticacion
+      },
+    });
+  
     return await response.json();
+  }
 
-}
-//estaria bien mirar que significa el async y el await
 export async function removeCustomer(id:string){
 
     const url = process.env.REACT_APP_API + 'customers/'+id;
