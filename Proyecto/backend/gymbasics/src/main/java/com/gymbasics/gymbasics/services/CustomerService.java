@@ -1,12 +1,14 @@
 package com.gymbasics.gymbasics.services;
 
 import com.gymbasics.gymbasics.entities.Customer;
+import com.gymbasics.gymbasics.entities.User;
 import com.gymbasics.gymbasics.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService implements ICustomerService {
@@ -29,4 +31,5 @@ public class CustomerService implements ICustomerService {
     public void save(Customer customer){
         repository.save(customer);
     }
+
 }
