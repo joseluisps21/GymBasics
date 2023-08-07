@@ -67,13 +67,14 @@ const RegisterForm: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent className="ion-text-center">
+      
         <IonHeader>
           <IonToolbar>
             <IonTitle>Regístrate</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonList style={{ margin: 'auto', maxWidth: '600px' }}>
+        <IonContent fullscreen>
+        <IonList style={{ margin: 'auto', maxWidth: '800px' }}>
           <IonItem>
             <IonInput
               value={user.name}

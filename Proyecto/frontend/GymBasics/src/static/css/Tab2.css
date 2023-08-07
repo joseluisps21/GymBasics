@@ -1,0 +1,11 @@
+.ion-text-center{
+    max-width: 1200px;
+    align-items: center;
+    margin: auto;
+}
+
+.ion-text-center-small{
+    max-width: 600px;
+    align-items: center;
+    margin: auto;
+}
