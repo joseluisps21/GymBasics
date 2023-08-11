@@ -1,6 +1,7 @@
 package com.gymbasics.gymbasics.services;
 
 import com.gymbasics.gymbasics.entities.Customer;
+import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
 
 import java.util.List;
@@ -24,6 +25,5 @@ public interface IUserService {
     public Optional<User> getUserByUsername(String username);
 
 
-
-
+    List<Routine> getUserRoutinesByUsername(String username);
 }
