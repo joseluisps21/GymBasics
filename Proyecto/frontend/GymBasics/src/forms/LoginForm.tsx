@@ -14,6 +14,7 @@ const LoginForm: React.FC = () => {
   const history = useHistory();
   const [invalidFormError, setInvalidFormError] = useState(false);
   const [loggedError, setLoggedError] = useState(false);
+  const [invalidCredentialsError, setInvalidCredentialsError] = useState(false);
   const { login } = useAuth();
 
   const loginUserAPI = async (username: string, password: string) => {
@@ -21,6 +22,11 @@ const LoginForm: React.FC = () => {
 
     if (response.status === 400) {
       setInvalidFormError(true);
+      return;
+    }
+
+    if (response.status === 401) {
+      setInvalidCredentialsError(true);
       return;
     }
 
@@ -64,12 +70,13 @@ const LoginForm: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent>
+      
         <IonHeader>
           <IonToolbar>
-            <IonTitle className="ion-text-center">Iniciar sesión</IonTitle>
+            <IonTitle >Iniciar sesión</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <IonContent fullscreen>
         <IonList className="login-form">
           <IonItem>
             <IonInput
@@ -135,13 +142,23 @@ const LoginForm: React.FC = () => {
 
 <IonToast
           isOpen={loggedError}
-          onDidDismiss={() => setInvalidFormError(false)}
+          onDidDismiss={() => setLoggedError(false)}
           color={'danger'}
           position="top"
           message="Ya existe una sesión activa"
           cssClass="centered-toast"
           duration={2000}
         />
+        <IonToast
+          isOpen={invalidCredentialsError}
+          onDidDismiss={() => setInvalidCredentialsError(false)}
+          color={'danger'}
+          position="top"
+          message="Usuario o Contraseña incorrectos"
+          cssClass="centered-toast"
+          duration={2000}
+        />
+
       </IonContent>
     </IonPage>
   );

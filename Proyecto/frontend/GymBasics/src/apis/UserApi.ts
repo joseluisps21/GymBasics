@@ -3,6 +3,7 @@ import User from "../interfaces/User"
 import { useState } from 'react';
 import { IonToast, IonButton } from '@ionic/react';
 
+//Función de registro de usuario
 export async function saveUser(user: User): Promise<Response> {
   const url = process.env.REACT_APP_API + 'register';
   const response = await fetch(url, {
@@ -32,18 +33,23 @@ export async function loginUser(username: string, password: string): Promise<Res
   return response
 }
 
+export async function getUserByUsername(username: string | null) {
+  const url = process.env.REACT_APP_API + 'users/' + username;
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    console.error('Token no encontrado');
+    return null;
+  }
 
-
-
-export async function getUserById(id: string) {
-  const url = process.env.REACT_APP_API + 'users/' + id;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`, //JWT tokken en solicitud que requiere autenticacion
     },
-    mode: 'cors',
   });
+
   return await response.json();
 }
 
