@@ -78,4 +78,22 @@ public class UserService implements IUserService {
         }
         return Collections.emptyList();
     }
+
+    public User updateUserLevel(String username, String newLevel) {
+        User user = repository.findUserByUsername(username);
+        if (user != null) {
+            user.setLevel(newLevel);
+            return repository.save(user);
+        }
+        return null;
+    }
+
+    public User updateUserFocus(String username, String newFocus) {
+        User user = repository.findUserByUsername(username);
+        if (user != null) {
+            user.setFocus(newFocus);
+            return repository.save(user);
+        }
+        return null;
+    }
 }

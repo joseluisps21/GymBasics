@@ -1,18 +1,27 @@
 package com.gymbasics.gymbasics.services;
 
-import com.gymbasics.gymbasics.entities.Activity;
-import com.gymbasics.gymbasics.entities.Routine;
+import com.gymbasics.gymbasics.entities.*;
 import com.gymbasics.gymbasics.repository.ActivityRepository;
+import com.gymbasics.gymbasics.repository.ExerciseRepository;
 import com.gymbasics.gymbasics.repository.RoutineRepository;
+import com.gymbasics.gymbasics.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class ActivityService {
     @Autowired
     private ActivityRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ExerciseRepository exerciseRepository;
 
     public List<Activity> getAll(){
         return (List<Activity>) repository.findAll();
@@ -30,5 +39,7 @@ public class ActivityService {
     public void save(Activity activity){
         repository.save(activity);
     }
+
+
 
 }

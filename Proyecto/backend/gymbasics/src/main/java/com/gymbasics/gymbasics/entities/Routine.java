@@ -1,6 +1,7 @@
 package com.gymbasics.gymbasics.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,16 +27,16 @@ public class Routine {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "routine_exercise",
             joinColumns = @JoinColumn(name = "id_routine"),
             inverseJoinColumns = @JoinColumn(name = "id_exercise")
     )
-    private Set<Exercise> exercises;
+    private List<Exercise> exercises;
 
     @OneToMany(mappedBy = "routine")
     private List<Workout> workouts;

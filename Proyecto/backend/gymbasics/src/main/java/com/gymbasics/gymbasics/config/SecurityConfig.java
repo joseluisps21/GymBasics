@@ -1,5 +1,8 @@
 package com.gymbasics.gymbasics.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gymbasics.gymbasics.services.CustomUserDetailsService;
 import jakarta.servlet.Filter;
 import lombok.AllArgsConstructor;
@@ -95,6 +98,7 @@ public class SecurityConfig {
             throw new RuntimeException("Error al crear JwtAuthenticationFilter.", e);
         }
     }
+
 
 }
 

@@ -1,5 +1,7 @@
 package com.gymbasics.gymbasics.controllers;
 
+import com.gymbasics.gymbasics.DTOs.EditFocusRequest;
+import com.gymbasics.gymbasics.DTOs.EditLevelRequest;
 import com.gymbasics.gymbasics.entities.*;
 import com.gymbasics.gymbasics.services.IUserService;
 import com.gymbasics.gymbasics.services.SessionService;
@@ -85,7 +87,7 @@ public class UserController {
                 userDTO.setId(user.getId());
                 userDTO.setUsername(user.getUsername());
                 userDTO.setEmail(user.getEmail());
-                userDTO.setPlan(user.getPlan());
+                userDTO.setPlan(user.getWeight());
                 userDTO.setFocus(user.getFocus());
                 userDTO.setLevel(user.getLevel());
                 userDTO.setName(user.getName());
@@ -106,6 +108,16 @@ public class UserController {
     public ResponseEntity<List<Routine>> getUserRoutinesByUsername(@PathVariable String username) {
         List<Routine> routines = service.getUserRoutinesByUsername(username);
         return ResponseEntity.ok(routines);
+    }
+
+    @PatchMapping("api/editlevel")
+    public User updateUserLevel(@RequestBody EditLevelRequest request) {
+        return service.updateUserLevel(request.getUsername(), request.getLevel());
+    }
+
+    @PatchMapping("api/editfocus")
+    public User updateUserFocus(@RequestBody EditFocusRequest request) {
+        return service.updateUserFocus(request.getUsername(), request.getFocus());
     }
 
 

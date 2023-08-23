@@ -26,4 +26,8 @@ public interface IUserService {
 
 
     List<Routine> getUserRoutinesByUsername(String username);
+
+    User updateUserLevel(String username, String level);
+
+    User updateUserFocus(String username, String focus);
 }

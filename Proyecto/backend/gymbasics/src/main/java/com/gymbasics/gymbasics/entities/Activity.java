@@ -1,6 +1,7 @@
 package com.gymbasics.gymbasics.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Activity {
 
     @ManyToOne
     @JoinColumn(name = "id_workout")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Workout workout;
 
     @OneToMany(mappedBy = "activity")

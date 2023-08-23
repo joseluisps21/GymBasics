@@ -1,5 +1,8 @@
 package com.gymbasics.gymbasics.entities;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +21,8 @@ import java.util.List;
 @Getter @Setter
 @ToString
 @EqualsAndHashCode
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
 
     @Id
@@ -30,8 +35,7 @@ public class User implements UserDetails {
     private String email;
     private String level;
     private String focus;
-    @Column(nullable = true)
-    private String plan;
+    private String weight;
 
     @OneToMany(mappedBy = "user")
     private List<Routine> routines;

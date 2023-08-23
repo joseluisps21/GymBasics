@@ -1,6 +1,7 @@
 package com.gymbasics.gymbasics.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class Muscle {
     private String name;
 
     @ManyToMany(mappedBy = "muscles")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Exercise> exercises;
 
 

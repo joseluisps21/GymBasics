@@ -34,4 +34,5 @@ public class ActivityController {
     public void save(@RequestBody Activity activity){
         service.save(activity);
     }
+
 }
