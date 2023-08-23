@@ -6,5 +6,5 @@ export default interface User {
     username?:string;
     password?:string;
     email?:string;
-    plan?:string;
+    weight?:string;
 }

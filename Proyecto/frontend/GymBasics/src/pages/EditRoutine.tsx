@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { IonAlert, IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCheckbox, IonChip, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonText, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import ExerciseDetail from './ExerciseDetail';
 import { addCircleOutline } from 'ionicons/icons';
 import Exercise from '../interfaces/Exercise';
@@ -10,9 +10,10 @@ import { getIconBasedOnLevel } from '../components/LevelChange';
 import { getIconBasedOnFocus } from '../components/FocusChange';
 import { useAuth } from '../contexts/AuthContext';
 import FullRoutine from '../interfaces/FullRoutine';
-import { saveRoutine } from '../apis/RoutinesApi';
+import { getRoutinesById, saveRoutine, updateRoutine } from '../apis/RoutinesApi';
+import UpdatedRoutine from '../interfaces/UpdatedRoutine';
 
-const CreateRoutine: React.FC = () => {
+const EditRoutine: React.FC = () => {
 
   const history = useHistory();
   const [activeSegment, setActiveSegment] = useState<string>('all');
@@ -24,6 +25,46 @@ const CreateRoutine: React.FC = () => {
   const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
   const [showSegmentAlert, setShowSegmentAlert] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showConfirmationAlert, setShowConfirmationAlert] = useState(false);
+
+
+  const [routineDetails, setRoutineDetails] = useState<UpdatedRoutine | null>(null);
+  const { routineId } = useParams<{ routineId: string }>();
+
+  const handleGoBack = () => {
+    history.goBack();
+  };
+
+  const handleConfirmationAlert = (confirmed: boolean) => {
+    setShowConfirmationAlert(false); // Cerrar el alert
+
+    if (confirmed) {
+      // Ejecutar la acción de editar la rutina aquí
+      handleUpdateFields();
+    }
+  };
+
+
+  useEffect(() => {
+    if (routineId) {
+      getRoutinesById(routineId)
+        .then((response) => {
+          if (response) {
+            setRoutineDetails({
+              routineName: response.name,
+              exercises: response.exercises,
+              // Agrega otros campos relevantes de FullRoutine si es necesario
+            });
+            setSelectedExercises(response.exercises); // Preselecciona los ejercicios
+            setRoutineName(response.name); // Establece el nombre de la rutina
+            console.log(selectedExercises)
+          }
+        })
+        .catch((error) => {
+          console.error('Error obteniendo detalles de la rutina:', error);
+        });
+    }
+  }, [routineId]);
 
 
   const handleExerciseDetail = (exerciseId: any) => {
@@ -80,27 +121,35 @@ const CreateRoutine: React.FC = () => {
     modal.current?.dismiss();
   }
 
-  const handleCreateRoutine = () => {
-    if (selectedExercises.length === 0 || routineName.trim() === '') {
+  const handleUpdateFields = () => {
+    // Realiza el procesamiento necesario en los campos, por ejemplo, el nombre de la rutina
+    const updatedRoutineName = routineName.trim(); // Por ejemplo, eliminar espacios en blanco extras
+
+    // Llama a la función que maneja la edición de la rutina
+    handleEditRoutine(updatedRoutineName);
+  };
+
+  const handleEditRoutine = (updatedRoutineName: string) => {
+    if (selectedExercises.length === 0 || updatedRoutineName === '') {
       setShowNoExerciseToast(true);
       return;
     }
 
-    const routine: FullRoutine = {
-      username: currentUser || '',
-      routineName: routineName,
+    const routine: UpdatedRoutine = {
+      routineName: updatedRoutineName,
       exercises: selectedExercises,
     };
 
-    saveRoutine(routine)
+    console.log(routine);
+
+    updateRoutine(routine, routineId)
       .then((response) => {
-        if (response.ok) {
+        if (response) {
           setShowSuccessToast(true);
-          console.log('Rutina creada con éxito');
+          console.log('Rutina actualizada con éxito');
           console.log(response);
           history.push('/Tab2');
         } else {
-          // Error al crear la rutina, muestra un mensaje de error
           console.error('Error al crear la rutina');
         }
       })
@@ -148,7 +197,8 @@ const CreateRoutine: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Creación de Rutina</IonTitle>
+          <IonButton onClick={handleGoBack} color="medium">Volver</IonButton>
+          <IonTitle>Edición de Rutina</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -165,7 +215,7 @@ const CreateRoutine: React.FC = () => {
             ></IonInput>
           </IonItem>
 
-          <IonButton id="open-modal" onClick={handleOpenModal} >
+          <IonButton id="open-edit-modal" onClick={handleOpenModal} >
             Añadir ejercicios
           </IonButton>
 
@@ -182,7 +232,7 @@ const CreateRoutine: React.FC = () => {
                   <IonCardHeader>
                     <IonCardTitle color={'primary'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
 
-                    <div style={{marginRight:'2px'}}>
+                      <div style={{marginRight:'2px'}}>
                         <IonAvatar slot="start">
                           <img alt="Silhouette of mountains" src={require(`../static/images/${exercise.picture}.jpeg`)} />
                         </IonAvatar>
@@ -226,11 +276,12 @@ const CreateRoutine: React.FC = () => {
             </IonList>
           }
 
-          <IonButton color="success" onClick={handleCreateRoutine}>
-            Crear Rutina
+          <IonButton color="success" onClick={() => setShowConfirmationAlert(true)}>
+            Editar Rutina
           </IonButton>
 
-          <IonModal ref={modal} trigger="open-modal" presentingElement={presentingElement!}>
+
+          <IonModal ref={modal} trigger="open-edit-modal" presentingElement={presentingElement!}>
             <IonHeader>
               <IonToolbar>
                 <IonTitle>
@@ -285,11 +336,12 @@ const CreateRoutine: React.FC = () => {
                   <IonCard key={result.id}>
                     <IonCardHeader>
                       <IonCardTitle color={'primary'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
                       <div style={{marginRight:'2px'}}>
-                          <IonAvatar slot="start">
-                            <img alt="Silhouette of mountains" src={require(`../static/images/${result?.picture}.jpeg`)} />
-                          </IonAvatar>
-                        </div>
+                        <IonAvatar slot="start">
+                          <img alt="Silhouette of mountains" src={require(`../static/images/${result.picture}.jpeg`)} />
+                        </IonAvatar>
+                      </div>
                         <div onClick={(e) => handleExerciseDetail(result.id?.toString())} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', cursor: 'pointer' }}>
                           {result.name}
                         </div>
@@ -343,7 +395,7 @@ const CreateRoutine: React.FC = () => {
           <IonToast
             isOpen={showSuccessToast}
             onDidDismiss={() => setShowSuccessToast(false)}
-            message="¡Rutina creada con éxito!"
+            message="¡Rutina actualizada con éxito!"
             position="top"
             color="success"
             duration={3000}
@@ -357,10 +409,29 @@ const CreateRoutine: React.FC = () => {
             message="Selecciona la pestaña Sugeridos si quieres navegar entre los ejercicios que se adaptan a ti."
             buttons={['OK']}
           />
+
+          <IonAlert
+            isOpen={showConfirmationAlert}
+            onDidDismiss={() => setShowConfirmationAlert(false)}
+            header="Confirmación"
+            message="¿Estás seguro de los cambios realizados?"
+            buttons={[
+              {
+                text: 'No',
+                role: 'cancel',
+                handler: () => handleConfirmationAlert(false),
+              },
+              {
+                text: 'Sí',
+                handler: () => handleConfirmationAlert(true),
+              },
+            ]}
+          />
+
         </div>
       </IonContent>
     </IonPage>
   );
 };
 
-export default CreateRoutine;
+export default EditRoutine;

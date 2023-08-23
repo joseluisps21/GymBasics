@@ -9,3 +9,41 @@
     align-items: center;
     margin: auto;
 }
+
+ion-modal#timer-modal {
+    --width: fit-content;
+    --min-width: 250px;
+    --height: fit-content;
+    --border-radius: 6px;
+    --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+  }
+  
+  ion-modal#timer-modal h1 {
+    margin: 20px 20px 10px 20px;
+  }
+  
+  ion-modal#timer-modal ion-icon {
+    margin-right: 6px;
+  
+    width: 48px;
+    height: 48px;
+  
+    padding: 4px 0;
+  
+    color: #aaaaaa;
+  }
+  
+  ion-modal#timer-modal .wrapper {
+    margin-bottom: 10px;
+  }
+
+  .div-left {
+    cursor: pointer;
+    flex: 10;
+    margin-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+  }
+  

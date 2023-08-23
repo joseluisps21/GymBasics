@@ -28,7 +28,7 @@ const RegisterForm: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    if (!user.name || !user.email || !user.username || !password || !confirmPassword || !user.level || !user.focus || !user.plan) {
+    if (!user.name || !user.email || !user.username || !password || !confirmPassword || !user.level || !user.focus || !user.weight) {
       setShowError(true);
       return;
     }
@@ -140,6 +140,18 @@ const RegisterForm: React.FC = () => {
           </IonItem>
 
           <IonItem>
+            <IonInput
+              value={user.weight}
+              label="Peso Corporal (Kgs)"
+              labelPlacement="floating"
+              placeholder="Introduce tu Peso Corporal"
+              required
+              style={{ width: '100%' }}
+              onIonChange={(e) => setUser({ ...user, weight: e.detail.value! })}
+            ></IonInput>
+          </IonItem>
+
+          <IonItem>
             <IonSelect
               value={user.level}
               aria-label="level"
@@ -166,18 +178,6 @@ const RegisterForm: React.FC = () => {
               <IonSelectOption value="loseweight">Perder Peso</IonSelectOption>
               <IonSelectOption value="musclemass">Ganar Masa Muscular</IonSelectOption>
               <IonSelectOption value="mixed">Mixto</IonSelectOption>
-            </IonSelect>
-          </IonItem>
-
-          <IonItem>
-            <IonSelect
-              interface="action-sheet"
-              value={user.plan}
-              placeholder="Plan Básico"
-              style={{ width: '100%' }}
-              onIonChange={(e) => setUser({ ...user, plan: e.detail.value! })}
-            >
-              <IonSelectOption value="basic">Básico</IonSelectOption>
             </IonSelect>
           </IonItem>
         </IonList>

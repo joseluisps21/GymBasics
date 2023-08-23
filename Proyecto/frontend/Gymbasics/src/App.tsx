@@ -23,6 +23,7 @@ import CreateRoutine from './pages/CreateRoutine';
 import ExerciseDetail from './pages/ExerciseDetail';
 import CreateExercise from './pages/CreateExercise';
 import TrainingDetail from './pages/TrainingDetail';
+import EditRoutine from './pages/EditRoutine';
 //Security
 import NotAuthorized from './pages/security/NotAuthorized';
 
@@ -52,6 +53,7 @@ import './theme/variables.css';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import PrivateRoute from './pages/security/PrivateRoute';
 
+
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -67,9 +69,11 @@ const App: React.FC = () => {
               <PrivateRoute path="/tab3" component={Tab3} />
               <PrivateRoute path="/tab4" component={Tab4} />
               <PrivateRoute path="/CreateRoutine" component={CreateRoutine} />
-              <PrivateRoute path="/ExerciseDetail" component={ExerciseDetail} />
+              <PrivateRoute path="/ExerciseDetail/:exerciseId" component={ExerciseDetail} />
               <PrivateRoute path="/CreateExercise" component={CreateExercise} />
-              <PrivateRoute path="/TrainingDetail" component={TrainingDetail} />
+              <PrivateRoute path="/TrainingDetail/:workoutId" component={TrainingDetail} />
+              <PrivateRoute path="/EditRoutine/:routineId" component={EditRoutine} />
+
 
 
               {/**************** Rutas públicas ****************/}
@@ -93,10 +97,6 @@ const App: React.FC = () => {
               <IonTabButton tab="tab3" href="/tab3">
                 <IonIcon aria-hidden="true" icon={personOutline} />
                 <IonLabel>Perfil</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="tab4" href="/tab4">
-                <IonIcon aria-hidden="true" icon={square} />
-                <IonLabel>Tab 4</IonLabel>
               </IonTabButton>
             </IonTabBar>
           </IonTabs>

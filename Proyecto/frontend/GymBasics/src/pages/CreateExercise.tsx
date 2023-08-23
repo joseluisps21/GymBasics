@@ -10,6 +10,10 @@ import User from '../interfaces/User';
 import bcrypt from 'bcryptjs';
 import Exercise from '../interfaces/Exercise';
 import { muscleList } from '../components/muscleList';
+import FullExercise from '../interfaces/FullExercise';
+import { saveExercise } from '../apis/ExercisesApi';
+import Muscle from '../interfaces/Muscle';
+import { getMuscles } from '../apis/MusclesApi';
 
 const CreateExercise: React.FC = () => {
 
@@ -18,23 +22,69 @@ const CreateExercise: React.FC = () => {
         history.goBack();
     };
 
-    const [exercise, setExercise] = useState<Exercise>({});
+
     const [showError, setShowError] = useState(false);
     const [selectedMuscles, setSelectedMuscles] = useState<string[]>([]);
     const history = useHistory();
+    const [muscles, setMuscles] = useState<Muscle[]>([]);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+    const [exercise, setExercise] = useState<FullExercise>({
+        exerciseName: '',
+        exerciseLevel: '',
+        exerciseFocus: '',
+        exercisePicture: 'default.jpg',
+        muscleIds: [],
+    });
 
 
-    const handleRegister = async () => {
-        if (!exercise.name || !exercise.muscles || !exercise.level || !selectedMuscles) {
+    const handleCreateExercise = async () => {
+        if (!exercise.exerciseName || !exercise.exerciseLevel || !exercise.exerciseFocus || exercise.muscleIds.length === 0) {
             setShowError(true);
+            console.log(exercise)
             return;
         }
-    }
 
-    const resetForm = () => {
-        setExercise({});
+        try {
+            const response = await saveExercise(exercise);
+            if (response.ok) {
+                setSelectedMuscles([]);
+                setExercise({
+                    exerciseName: '',
+                    exerciseLevel: '',
+                    exerciseFocus: '',
+                    exercisePicture: 'default.jpg',
+                    muscleIds: [],
+                });
+                setShowSuccessToast(true);
+                history.push('/createRoutine'); // Cambia "otra-ruta" por la ruta deseada
+            } else {
+                console.error('Error al crear el ejercicio');
+            }
+        } catch (error) {
+            console.error('Error al crear el ejercicio:', error);
+        }
     };
 
+    // const resetForm = () => {
+    //     setExercise({});
+    // };
+
+    useEffect(() => {
+        // Obtener la lista de músculos al cargar el componente
+        async function fetchMuscles() {
+            try {
+                const response = await getMuscles();
+                if (response) {
+                    setMuscles(response);
+                }
+            } catch (error) {
+                console.error('Error al obtener la lista de músculos:', error);
+            }
+        }
+
+        fetchMuscles();
+    }, []);
 
     return (
         <IonPage>
@@ -50,13 +100,13 @@ const CreateExercise: React.FC = () => {
                 <IonList style={{ margin: 'auto', maxWidth: '800px' }}>
                     <IonItem>
                         <IonInput
-                            value={exercise.name}
+                            value={exercise.exerciseName}
                             label="Nombre"
                             labelPlacement="floating"
                             placeholder="Introduce el nombre del ejercicio"
                             required
                             style={{ width: '100%' }}
-                            onIonChange={(e) => setExercise({ ...exercise, name: e.detail.value! })}
+                            onIonChange={(e) => setExercise({ ...exercise, exerciseName: e.detail.value! })}
                         ></IonInput>
                     </IonItem>
 
@@ -75,12 +125,12 @@ const CreateExercise: React.FC = () => {
 
                     <IonItem>
                         <IonSelect
-                            value={exercise.level}
+                            value={exercise.exerciseLevel}
                             aria-label="level"
                             interface="action-sheet"
                             placeholder="Selecciona el nivel de dificultad del ejercicio"
                             style={{ width: '100%' }}
-                            onIonChange={(e) => setExercise({ ...exercise, level: e.detail.value! })}
+                            onIonChange={(e) => setExercise({ ...exercise, exerciseLevel: e.detail.value! })}
                         >
                             <IonSelectOption value="beginner">Principiante</IonSelectOption>
                             <IonSelectOption value="intermediate">Intermedio</IonSelectOption>
@@ -90,16 +140,15 @@ const CreateExercise: React.FC = () => {
 
                     <IonItem>
                         <IonSelect
-                            value={exercise.focus}
+                            value={exercise.exerciseFocus}
                             aria-label="focus"
                             interface="action-sheet"
                             placeholder="Selecciona el tipo de entrenamiento al que se enfoca"
                             style={{ width: '100%' }}
-                            onIonChange={(e) => setExercise({ ...exercise, focus: e.detail.value! })}
+                            onIonChange={(e) => setExercise({ ...exercise, exerciseFocus: e.detail.value! })}
                         >
                             <IonSelectOption value="loseweight">Perder Peso</IonSelectOption>
                             <IonSelectOption value="musclemass">Ganar Masa Muscular</IonSelectOption>
-                            <IonSelectOption value="mixed">Mixto</IonSelectOption>
                         </IonSelect>
                     </IonItem>
 
@@ -111,10 +160,14 @@ const CreateExercise: React.FC = () => {
                             value={selectedMuscles}
                             aria-label="focus"
                             placeholder="Selecciona los músculos involucrados en el ejercicio"
-                            onIonChange={(e) => setSelectedMuscles(e.detail.value as string[])}
+                            onIonChange={(e) => {
+                                const selectedMuscleIds = e.detail.value.map(Number); // Convierte las cadenas a números
+                                setSelectedMuscles(selectedMuscleIds);
+                                setExercise({ ...exercise, muscleIds: selectedMuscleIds });
+                            }}
                         >
-                            {muscleList.map((muscle) => (
-                                <IonSelectOption key={muscle} value={muscle}>{muscle}</IonSelectOption>
+                            {muscles.map((muscle) => (
+                                <IonSelectOption key={muscle.id} value={muscle.id}>{muscle.name}</IonSelectOption>
                             ))}
                         </IonSelect>
                     </IonItem>
@@ -129,7 +182,7 @@ const CreateExercise: React.FC = () => {
                                 expand="block"
                                 shape="round"
                                 color="success"
-                                onClick={handleRegister}
+                                onClick={handleCreateExercise}
                                 style={{ marginTop: '16px', width: 'fit-content', margin: 'auto' }}
                             >
                                 Crear
@@ -145,6 +198,16 @@ const CreateExercise: React.FC = () => {
                     message="Por favor, complete todos los campos restantes"
                     cssClass="centered-toast"
                     duration={2000}
+                />
+
+                <IonToast
+                    isOpen={showSuccessToast}
+                    onDidDismiss={() => setShowSuccessToast(false)}
+                    message="¡Ejercicio creada con éxito!"
+                    position="top"
+                    color="success"
+                    duration={3000}
+                    cssClass="centered-toast"
                 />
             </IonContent>
         </IonPage>

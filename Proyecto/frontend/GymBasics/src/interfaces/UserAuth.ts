@@ -6,7 +6,7 @@ export default interface UserAuth {
     email?: string;
     level?: string;
     focus?: string;
-    plan?: string;
+    weight?: string;
     enabled?: boolean;
     authorities?: { authority: string }[];
     accountNonLocked?: boolean;
