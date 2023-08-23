@@ -1,6 +1,7 @@
 package com.gymbasics.gymbasics.services;
 
 import com.gymbasics.gymbasics.entities.Customer;
+import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
 import com.gymbasics.gymbasics.repository.UserRepository;
 import org.springframework.aop.ClassFilter;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +68,14 @@ public class UserService implements IUserService {
     public Optional<User> getUserByUsername(String username){
         Optional<User> user = repository.findByUsername(username);
         return user;
+    }
+
+    public List<Routine> getUserRoutinesByUsername(String username) {
+        Optional<User> userOptional = repository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return user.getRoutines(); // Obtiene la lista de rutinas desde la entidad User
+        }
+        return Collections.emptyList();
     }
 }

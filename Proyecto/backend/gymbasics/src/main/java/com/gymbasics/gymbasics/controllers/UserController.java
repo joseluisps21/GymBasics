@@ -1,9 +1,6 @@
 package com.gymbasics.gymbasics.controllers;
 
-import com.gymbasics.gymbasics.entities.Customer;
-import com.gymbasics.gymbasics.entities.User;
-import com.gymbasics.gymbasics.entities.UserCredentials;
-import com.gymbasics.gymbasics.entities.UserDTO;
+import com.gymbasics.gymbasics.entities.*;
 import com.gymbasics.gymbasics.services.IUserService;
 import com.gymbasics.gymbasics.services.SessionService;
 import lombok.Getter;
@@ -28,10 +25,17 @@ public class UserController {
     public List<User> getAll(){
         return service.getAll();
     }
-    @GetMapping("/api/users/{id}")
-    public User getById(@PathVariable String id){
-        return service.getById(Long.parseLong(id));
+
+    //@GetMapping("/api/users/{id}")
+    //public User getById(@PathVariable String id){
+    //    return service.getById(Long.parseLong(id));
+    //}
+
+    @GetMapping("/api/users/{username}")
+    public Optional<User> getByUsername(@PathVariable String username){
+        return service.getUserByUsername(username);
     }
+
     @DeleteMapping("/api/users/{id}")
     public void remove(@PathVariable String id){
         service.remove(Long.parseLong(id));
@@ -96,6 +100,12 @@ public class UserController {
             // Las credenciales son inválidas
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+    }
+
+    @GetMapping("api/{username}/routines")
+    public ResponseEntity<List<Routine>> getUserRoutinesByUsername(@PathVariable String username) {
+        List<Routine> routines = service.getUserRoutinesByUsername(username);
+        return ResponseEntity.ok(routines);
     }
 
 

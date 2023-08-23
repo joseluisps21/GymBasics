@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -31,6 +32,9 @@ public class User implements UserDetails {
     private String focus;
     @Column(nullable = true)
     private String plan;
+
+    @OneToMany(mappedBy = "user")
+    private List<Routine> routines;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
