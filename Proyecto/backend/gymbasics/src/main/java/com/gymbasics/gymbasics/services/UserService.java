@@ -1,11 +1,14 @@
 package com.gymbasics.gymbasics.services;
 
+import com.gymbasics.gymbasics.DTOs.UserPasswordDTO;
+import com.gymbasics.gymbasics.DTOs.UserUpdatedDTO;
 import com.gymbasics.gymbasics.entities.Customer;
 import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
 import com.gymbasics.gymbasics.repository.UserRepository;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -95,5 +98,42 @@ public class UserService implements IUserService {
             return repository.save(user);
         }
         return null;
+    }
+
+    public void updatePassword(String username, UserPasswordDTO userDto, PasswordEncoder passwordEncoder) {
+        User user = repository.findUserByUsername(username);
+
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        // Verificar si la contraseña actual coincide utilizando el PasswordEncoder
+        if (!passwordEncoder.matches(userDto.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Contraseña actual incorrecta");
+        }
+
+        // Actualizar la contraseña
+        //String newPasswordEncoded = passwordEncoder.encode(userDto.getNewPassword());
+        user.setPassword(userDto.getNewPassword());
+        repository.save(user);
+    }
+
+    public void updateUser(String username, UserUpdatedDTO userUpdateDTO) {
+        // Obtener el usuario de la base de datos
+        User user = repository.findUserByUsername(username);
+
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        // Actualizar los campos del usuario con los valores proporcionados en userUpdateDTO
+        user.setName(userUpdateDTO.getName());
+        user.setEmail(userUpdateDTO.getEmail());
+        user.setLevel(userUpdateDTO.getLevel());
+        user.setFocus(userUpdateDTO.getFocus());
+        user.setWeight(userUpdateDTO.getWeight());
+
+        // Guardar los cambios en la base de datos
+        repository.save(user);
     }
 }

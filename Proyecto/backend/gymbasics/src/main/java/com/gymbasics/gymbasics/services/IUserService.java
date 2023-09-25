@@ -1,8 +1,11 @@
 package com.gymbasics.gymbasics.services;
 
+import com.gymbasics.gymbasics.DTOs.UserPasswordDTO;
+import com.gymbasics.gymbasics.DTOs.UserUpdatedDTO;
 import com.gymbasics.gymbasics.entities.Customer;
 import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +33,8 @@ public interface IUserService {
     User updateUserLevel(String username, String level);
 
     User updateUserFocus(String username, String focus);
+
+    void updatePassword(String username, UserPasswordDTO userDto, PasswordEncoder passwordEncoder);
+
+    public void updateUser(String username, UserUpdatedDTO userUpdateDTO);
 }

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorkoutService {
@@ -69,7 +70,6 @@ public class WorkoutService {
         User user = userRepository.findUserByUsername(username);
 
         if (user == null) {
-            // Manejar caso de usuario no encontrado
             return Collections.emptyList();
         }
 
@@ -126,5 +126,6 @@ public class WorkoutService {
 
         return 0;
     }
+
 
 }
