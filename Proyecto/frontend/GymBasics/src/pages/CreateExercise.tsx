@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IonButton, IonChip, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { useHistory } from 'react-router';
-import { useAuth } from '../contexts/AuthContext';
-import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
-import { getUserByUsername, saveUser } from '../apis/UserApi';
-import UserAuth from '../interfaces/UserAuth';
-import { balloonOutline, flameOutline, flashOutline, pin, rocketOutline } from 'ionicons/icons';
-import User from '../interfaces/User';
-import bcrypt from 'bcryptjs';
-import Exercise from '../interfaces/Exercise';
-import { muscleList } from '../components/muscleList';
 import FullExercise from '../interfaces/FullExercise';
 import { saveExercise } from '../apis/ExercisesApi';
 import Muscle from '../interfaces/Muscle';
@@ -57,7 +48,7 @@ const CreateExercise: React.FC = () => {
                     muscleIds: [],
                 });
                 setShowSuccessToast(true);
-                history.push('/createRoutine'); // Cambia "otra-ruta" por la ruta deseada
+                history.goBack();
             } else {
                 console.error('Error al crear el ejercicio');
             }
@@ -65,10 +56,6 @@ const CreateExercise: React.FC = () => {
             console.error('Error al crear el ejercicio:', error);
         }
     };
-
-    // const resetForm = () => {
-    //     setExercise({});
-    // };
 
     useEffect(() => {
         // Obtener la lista de músculos al cargar el componente
@@ -109,19 +96,6 @@ const CreateExercise: React.FC = () => {
                             onIonChange={(e) => setExercise({ ...exercise, exerciseName: e.detail.value! })}
                         ></IonInput>
                     </IonItem>
-
-                    {/* <IonItem>
-            <input
-              value={exercise.picture}
-              type='file'
-              label="Correo"
-              labelPlacement="floating"
-              placeholder="Introduce tu correo"
-              required
-              style={{ width: '100%' }}
-              onIonChange={(e) => setUser({ ...user, email: e.detail.value! })}
-            ></input>
-          </IonItem> */}
 
                     <IonItem>
                         <IonSelect

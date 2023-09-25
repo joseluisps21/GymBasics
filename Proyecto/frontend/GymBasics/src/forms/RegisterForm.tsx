@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { IonList, IonItem, IonSelect, IonSelectOption, IonPage, IonInput, IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonGrid, IonRow, IonCol, IonToast, IonText } from '@ionic/react';
+import { IonList, IonItem, IonSelect, IonSelectOption, IonPage, IonInput, IonContent, IonHeader, IonToolbar, IonTitle, IonButton, IonGrid, IonRow, IonCol, IonToast, IonText, IonIcon } from '@ionic/react';
 import { saveUser } from '../apis/UserApi';
 import User from '../interfaces/User';
 import { useHistory } from 'react-router';
 import '../static/css/RegisterForm.css';
 import bcrypt from 'bcryptjs';
+import { eye, eyeOff } from 'ionicons/icons';
 
 
 const RegisterForm: React.FC = () => {
@@ -16,6 +17,8 @@ const RegisterForm: React.FC = () => {
   const [showPasswordLengthError, setShowPasswordLengthError] = useState(false);
   const history = useHistory();
   const [duplicateUser, setDuplicateUser] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
 
   const hashPassword = async (password: string) => {
     try {
@@ -115,7 +118,7 @@ const RegisterForm: React.FC = () => {
           <IonItem>
             <IonInput
               value={password}
-              type="password"
+              type={showPassword ? "text" : "password"}
               label="Contraseña"
               labelPlacement="floating"
               placeholder="Crea tu contraseña"
@@ -124,12 +127,19 @@ const RegisterForm: React.FC = () => {
               onIonChange={(e) => setPassword(e.detail.value!)}
               className={password.length < 4 ? 'ion-invalid' : ''}
             ></IonInput>
+            <IonButton
+              fill="clear"
+              onClick={() => setShowPassword(!showPassword)}
+              slot="end"
+            >
+              <IonIcon slot="icon-only" icon={showPassword ? eyeOff : eye} />
+            </IonButton>
           </IonItem>
 
           <IonItem>
             <IonInput
               value={confirmPassword}
-              type="password"
+              type={showPassword2 ? "text" : "password"}
               label="Confirma tu contraseña"
               labelPlacement="floating"
               placeholder="Confirma tu contraseña"
@@ -137,6 +147,13 @@ const RegisterForm: React.FC = () => {
               style={{ width: '100%' }}
               onIonChange={(e) => setConfirmPassword(e.detail.value!)}
             ></IonInput>
+            <IonButton
+              fill="clear"
+              onClick={() => setShowPassword2(!showPassword2)}
+              slot="end"
+            >
+              <IonIcon slot="icon-only" icon={showPassword2 ? eyeOff : eye} />
+            </IonButton>
           </IonItem>
 
           <IonItem>

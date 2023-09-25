@@ -101,3 +101,36 @@ export async function getExercises() {
   
     return await response.json();
   }
+
+  export async function getFavouritesExercisesByUsername(username: string | null) {
+    if (username === null) {
+      console.error('Username is missing');
+      return null;
+    }
+  
+    const apiUrl = process.env.REACT_APP_API;
+    if (!apiUrl) {
+      console.error('API URL is missing');
+      return null;
+    }
+  
+    const url = `${apiUrl}favorites/${username}`;
+    const token = localStorage.getItem('token');
+  
+    if (!token) {
+      console.error('Token not found');
+      return null;
+    }
+  
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  
+    return await response.json();
+  }
+
+  

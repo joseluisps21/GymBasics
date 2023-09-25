@@ -15,7 +15,7 @@ const NotAuthorized: React.FC = () => {
     <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle className="ion-text-center">Acción no permitida</IonTitle>
+            <IonTitle>Acción no permitida</IonTitle>
           </IonToolbar>
         </IonHeader>
       <IonContent >

@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { IonToast, IonButton } from '@ionic/react';
 import UserLevel from "../interfaces/UserLevel";
 import UserFocus from "../interfaces/UserFocus";
+import UserPassword from "../interfaces/UserPassword";
+import UserUpdated from "../interfaces/UserUpdated";
 
 //Función de registro de usuario
 export async function saveUser(user: User): Promise<Response> {
@@ -148,6 +150,70 @@ export async function editFocus(userFocus:  UserFocus | null) {
   });
 
   return await response.json();
+}
+
+export async function updatePassword(userPassword:  UserPassword | null, username: string | null) {
+  if (userPassword === null) {
+    console.error('Password is missing');
+    return null;
+  }
+
+  const apiUrl = process.env.REACT_APP_API;
+  if (!apiUrl) {
+    console.error('API URL is missing');
+    return null;
+  }
+
+  const url = `${apiUrl}${username}/updatePassword`;
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return null;
+  }
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: JSON.stringify(userPassword),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  return response;
+}
+
+export async function editProfile(userUpdated:  UserUpdated | null, username: string | null) {
+  if (userUpdated === null) {
+    console.error('Some information is missing');
+    return null;
+  }
+
+  const apiUrl = process.env.REACT_APP_API;
+  if (!apiUrl) {
+    console.error('API URL is missing');
+    return null;
+  }
+
+  const url = `${apiUrl}edit/${username}`;
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Token not found');
+    return null;
+  }
+
+  const response = await fetch(url, {
+    method: 'PATCH',
+    body: JSON.stringify(userUpdated),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  return response;
 }
 
 

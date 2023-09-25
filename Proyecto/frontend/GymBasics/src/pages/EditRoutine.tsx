@@ -36,10 +36,10 @@ const EditRoutine: React.FC = () => {
   };
 
   const handleConfirmationAlert = (confirmed: boolean) => {
-    setShowConfirmationAlert(false); // Cerrar el alert
+    setShowConfirmationAlert(false);
 
     if (confirmed) {
-      // Ejecutar la acción de editar la rutina aquí
+      
       handleUpdateFields();
     }
   };
@@ -53,7 +53,6 @@ const EditRoutine: React.FC = () => {
             setRoutineDetails({
               routineName: response.name,
               exercises: response.exercises,
-              // Agrega otros campos relevantes de FullRoutine si es necesario
             });
             setSelectedExercises(response.exercises); // Preselecciona los ejercicios
             setRoutineName(response.name); // Establece el nombre de la rutina
@@ -122,10 +121,9 @@ const EditRoutine: React.FC = () => {
   }
 
   const handleUpdateFields = () => {
-    // Realiza el procesamiento necesario en los campos, por ejemplo, el nombre de la rutina
-    const updatedRoutineName = routineName.trim(); // Por ejemplo, eliminar espacios en blanco extras
+    const updatedRoutineName = routineName.trim(); //eliminamos espacios en blanco extras
 
-    // Llama a la función que maneja la edición de la rutina
+    
     handleEditRoutine(updatedRoutineName);
   };
 

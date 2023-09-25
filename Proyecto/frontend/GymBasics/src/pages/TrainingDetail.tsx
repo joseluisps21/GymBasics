@@ -35,7 +35,6 @@ const TrainingDetail: React.FC = () => {
       if (currentUser) {
         const userData = await OnFilterUser();
         setUserData(userData);
-        //console.log(userData)
       }
     };
 

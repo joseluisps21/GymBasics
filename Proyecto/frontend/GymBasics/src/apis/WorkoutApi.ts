@@ -133,3 +133,34 @@ export async function saveWorkout(workout : Workout | undefined): Promise<Respon
   
     return await response.json();
   }
+
+  export async function deleteWorkout( workoutId: string | null) {
+    if (workoutId === null) {
+      console.error('id is missing');
+      return null;
+    }
+  
+    const apiUrl = process.env.REACT_APP_API;
+    if (!apiUrl) {
+      console.error('API URL is missing');
+      return null;
+    }
+  
+    const url = `${apiUrl}workouts/${workoutId}`;
+    const token = localStorage.getItem('token');
+  
+    if (!token) {
+      console.error('Token not found');
+      return null;
+    }
+  
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  
+    return response;
+  }

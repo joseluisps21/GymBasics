@@ -1,10 +1,11 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonItem, IonList, IonGrid, IonRow, IonCol, IonCheckbox, IonLabel, IonToast } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonItem, IonList, IonGrid, IonRow, IonCol, IonCheckbox, IonLabel, IonToast, IonIcon } from '@ionic/react';
 import { useState } from 'react';
 import '../static/css/LoginForm.css';
 import User from '../interfaces/User';
 import { loginUser } from '../apis/UserApi';
 import { useHistory } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
+import { eye, eyeOff } from "ionicons/icons";
 
 const LoginForm: React.FC = () => {
   const [user, setUser] = useState<User>({});
@@ -15,6 +16,7 @@ const LoginForm: React.FC = () => {
   const [invalidFormError, setInvalidFormError] = useState(false);
   const [loggedError, setLoggedError] = useState(false);
   const [invalidCredentialsError, setInvalidCredentialsError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
 
   const loginUserAPI = async (username: string, password: string) => {
@@ -35,7 +37,6 @@ const LoginForm: React.FC = () => {
     const token = response.headers.get('Authorization');
 
     if (token && token.startsWith('Bearer ')) {
-      // Almacena el token en el LocalStorage sin el prefijo 'Bearer'
       login(token.replace('Bearer ', ''));
     }
 
@@ -70,13 +71,13 @@ const LoginForm: React.FC = () => {
 
   return (
     <IonPage>
-      
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle >Iniciar sesión</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
+
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle >Iniciar sesión</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
         <IonList className="login-form">
           <IonItem>
             <IonInput
@@ -93,13 +94,20 @@ const LoginForm: React.FC = () => {
           <IonItem>
             <IonInput
               value={password}
-              type="password"
+              type={showPassword ? "text" : "password"}
               label="Contraseña"
               labelPlacement="floating"
               placeholder="Introduce tu contraseña"
               style={{ width: '100%' }}
               onIonChange={(e) => setPassword(e.detail.value!)}
             ></IonInput>
+            <IonButton
+              fill="clear"
+              onClick={() => setShowPassword(!showPassword)}
+              slot="end"
+            >
+              <IonIcon slot="icon-only" icon={showPassword ? eyeOff : eye} />
+            </IonButton>
           </IonItem>
 
           <IonItem>
@@ -140,7 +148,7 @@ const LoginForm: React.FC = () => {
           duration={2000}
         />
 
-<IonToast
+        <IonToast
           isOpen={loggedError}
           onDidDismiss={() => setLoggedError(false)}
           color={'danger'}

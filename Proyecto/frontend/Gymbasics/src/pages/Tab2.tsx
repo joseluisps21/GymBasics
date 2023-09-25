@@ -348,7 +348,7 @@ const Tab2: React.FC = () => {
       const response = await deleteRoutine(routineToDelete);
       fetchDeleteRoutines();
       if (response) {
-        // Rutina eliminada exitosamente, puedes realizar acciones adicionales si es necesario
+        // Rutina eliminada exitosamente
       } else {
         console.error('Error al eliminar la rutina');
       }
@@ -380,7 +380,7 @@ const Tab2: React.FC = () => {
       }));
     }
 
-    // Limpiar las notas para la rutina cancelada
+    // Limpiamos las notas para la rutina cancelada
     setActivityNotes({});
     setTempResultValues({});
     setCounter('00:00');
@@ -412,9 +412,9 @@ const Tab2: React.FC = () => {
             <h1>Mis Rutinas</h1>
             <IonIcon
               icon={refreshOutline}
-              onClick={fetchRoutines} // Llama a la función fetchRoutines al hacer clic en el icono
+              onClick={fetchRoutines}
               color="primary"
-              style={{ fontSize: '24px', cursor: 'pointer' }} // Estilo para hacer que el icono se vea como un botón
+              style={{ fontSize: '24px', cursor: 'pointer' }}
             />
           </IonText>
 
@@ -492,7 +492,7 @@ const Tab2: React.FC = () => {
                     <IonCardTitle color={'primary'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{flex:1}}>
                     <IonAvatar slot="start">
-                        <img alt="Silhouette of mountains" src={require(`../static/images/${activity.exercise?.picture}.jpeg`)} />
+                        <img src={require(`../static/images/${activity.exercise?.picture}.jpeg`)} />
                         </IonAvatar>
                         </div>
                       <div style={{ cursor: 'pointer', flex:10, marginLeft:'10px' ,whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} onClick={(e) => handleExerciseDetail(activity.exercise.id.toString())}>
@@ -688,7 +688,7 @@ const Tab2: React.FC = () => {
           isOpen={showTimeToast}
           onDidDismiss={() => setShowTimeToast(false)}
           message="Por favor, Introduzca el tiempo de entreno."
-          duration={3000} // Duración en milisegundos
+          duration={3000}
           position="top"
           color="danger"
           cssClass="centered-toast"
@@ -698,7 +698,7 @@ const Tab2: React.FC = () => {
           isOpen={showWorkoutSuccessToast}
           onDidDismiss={() => setShowWorkoutSuccessToast(false)}
           message="¡Entrenamiento completado con éxito!"
-          duration={3000} // Duración en milisegundos
+          duration={3000} 
           position="top"
           color="success"
           cssClass="centered-toast"
@@ -708,7 +708,7 @@ const Tab2: React.FC = () => {
           isOpen={showCancelTraining}
           onDidDismiss={() => setShowCancelTraining(false)}
           message="Entrenamiento descartado correctamente"
-          duration={3000} // Duración en milisegundos
+          duration={3000} 
           position="top"
           color="medium"
           cssClass="centered-toast"

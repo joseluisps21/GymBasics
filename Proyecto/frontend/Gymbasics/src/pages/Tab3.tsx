@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { IonAvatar, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonChip, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonPopover, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import React, { useEffect, useRef, useState } from 'react';
+import { IonActionSheet, IonAlert, IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonChip, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonModal, IonPage, IonPopover, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonText, IonTitle, IonToast, IonToolbar, RefresherEventDetail } from '@ionic/react';
 import './Tab3.css';
-import { ellipsisHorizontalOutline, createOutline, trashOutline, balloonOutline, flameOutline, flashOutline, bicycleOutline, barbellOutline, rocketOutline, extensionPuzzleOutline, barbell, basket, call, globe, heart, home, person, pin, star, trash, timeOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { ellipsisHorizontalOutline, createOutline, trashOutline, balloonOutline, flameOutline, flashOutline, bicycleOutline, barbellOutline, rocketOutline, extensionPuzzleOutline, barbell, basket, call, globe, heart, home, person, pin, star, trash, timeOutline, eyeOutline, eyeOffOutline, settingsOutline } from 'ionicons/icons';
 import { getRoutinesByUsername, getUserByUsername } from '../apis/UserApi';
 import { useHistory } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
 import UserAuth from '../interfaces/UserAuth';
-import { Component } from "react";
-import Chart from "react-apexcharts"
 import ReactApexChart from 'react-apexcharts';
-import TrainingDetail from './TrainingDetail';
 import { getIconBasedOnLevel } from '../components/LevelChange';
 import { getIconBasedOnFocus } from '../components/FocusChange';
-import Routine from '../interfaces/Routine';
-import Exercise from '../interfaces/Exercise';
-import Workout from '../interfaces/Workout';
 import RoutineResponse from '../interfaces/RoutineResponse';
 import { formatDate } from '../components/dateUtils';
+import { deleteWorkout } from '../apis/WorkoutApi';
 
 
 
@@ -28,8 +22,7 @@ const Tab3: React.FC = () => {
   const [userData, setUserData] = useState<UserAuth>({});
 
   const [routines, setRoutines] = useState<RoutineResponse[]>([]);
-  const [workout, setWorkout] = useState<Workout>();
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+
   const [hiddenRoutines, setHiddenRoutines] = useState<number[]>([]);
   const [monthlyVolumes, setMonthlyVolumes] = useState<number[]>([]);
   const [durationByMonth, setDurationByMonth] = useState<number[]>([]);
@@ -38,6 +31,107 @@ const Tab3: React.FC = () => {
   const [seriesData, setSeriesData] = useState<number[]>([]);
   const [numberOfActivitiesByMonth, setNumberOfActivitiesByMonth] = useState<number[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [openActionSheetId, setOpenActionSheetId] = useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
+
+
+  const modal = useRef<HTMLIonModalElement>(null);
+  const page = useRef(null);
+
+  const [presentingElement, setPresentingElement] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPresentingElement(page.current);
+  }, []);
+
+  function dismiss() {
+    modal.current?.dismiss();
+  }
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    try {
+      const response = await deleteWorkout(workoutId);
+      if (response?.status === 200) {
+        // Eliminación exitosa
+        console.log('Entrenamiento eliminado con éxito.');
+        setShowSuccessToast(true);
+        // Actualiza la lista de entrenamientos después de eliminar
+        const updatedRoutines = await getRoutinesByUsername(currentUser);
+        setRoutines(updatedRoutines);
+      } else {
+        console.error('Error al eliminar el entrenamiento.');
+        setShowErrorToast(true);
+      }
+    } catch (error) {
+      console.error('Error al eliminar el entrenamiento.', error);
+      setShowErrorToast(true);
+    } finally {
+      // Cierra el Action Sheet después de eliminar el entrenamiento
+      closeActionSheet(workoutId);
+    }
+  };
+
+
+  const OnLogout = () => {
+    logout();
+    window.location.reload();
+  };
+
+  const handleUpdatePassword = () => {
+    history.push('/EditPassword');
+    modal.current?.dismiss();
+  };
+
+  const handleEditProfile = () => {
+    history.push('/EditProfile');
+    modal.current?.dismiss();
+  };
+
+  const openActionSheet = (workoutId: string) => {
+    setOpenActionSheetId(workoutId);
+  };
+
+  const closeActionSheet = (workoutId: string) => {
+    setOpenActionSheetId(null);
+  };
+
+  const isActionSheetOpen = (workoutId: string): boolean => {
+    return openActionSheetId === workoutId;
+  };
+
+  const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+    try {
+      const response = await getRoutinesByUsername(currentUser);
+
+      if (response) {
+        setRoutines(response);
+        setDataLoaded(true);
+      }
+
+      const userDataResponse = await OnFilterUser();
+      if (userDataResponse) {
+        setUserData(userDataResponse);
+      }
+
+      const updatedMonthlyVolumes = calculateMonthlyVolumes(response);
+      setMonthlyVolumes(updatedMonthlyVolumes);
+
+      const updatedDurationByMonth = calculateTotalDurationByMonth(response);
+      setDurationByMonth(updatedDurationByMonth);
+
+      const updatedNumberOfWorkouts = calculateNumberOfWorkoutsByMonth(response);
+      setNumberOfWorkoutsByMonth(updatedNumberOfWorkouts);
+
+      setTimeout(() => {
+        event.detail.complete(); // Indica que la operación de refresco está completa
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      event.detail.complete();
+    }
+  };
+
 
   const handleExerciseDetail = (exerciseId: any) => {
     history.push(`/ExerciseDetail/${exerciseId}`);
@@ -77,20 +171,28 @@ const Tab3: React.FC = () => {
   const calculateTotalDurationByMonth = (routines: RoutineResponse[]) => {
     const totalDurationByMonth: number[] = new Array(12).fill(0);
     const currentYear = new Date().getFullYear();
-
-
+  
     routines.forEach((routine) => {
       routine.workouts?.forEach((workout) => {
         const workoutYear = new Date(workout.date).getFullYear();
-        if (workoutYear === currentYear && workout?.time && !isNaN(parseFloat(workout.time))) {
+        if (workoutYear === currentYear && workout?.time) {
           const month = new Date(workout.date).getMonth();
-          totalDurationByMonth[month] += parseFloat(workout.time);
+          const [hours, minutes] = workout.time.split(':').map(parseFloat);
+          if (!isNaN(hours) && !isNaN(minutes)) {
+            // Convierte las horas y minutos a un valor decimal
+            const durationInDecimal = hours + minutes / 60;
+            // Redondea a 2 decimales
+            const durationRounded = parseFloat(durationInDecimal.toFixed(2));
+            totalDurationByMonth[month] += durationRounded;
+          }
         }
       });
     });
-
+  
     return totalDurationByMonth;
   };
+  
+  
 
   const calculateNumberOfWorkoutsByMonth = (routines: RoutineResponse[]) => {
     const numberOfWorkoutsByMonth: number[] = new Array(12).fill(0);
@@ -259,15 +361,20 @@ const Tab3: React.FC = () => {
 
   return (
     <IonPage>
-      {dataLoaded && (
         <>
           <IonHeader>
             <IonToolbar>
               <IonTitle>Tu Perfil</IonTitle>
+              <IonIcon size='large' icon={settingsOutline} color="primary" slot="end" style={{ marginRight: '10px', cursor: 'pointer' }} id="open-modal-profile" />
             </IonToolbar>
           </IonHeader>
 
+
           <IonContent fullscreen>
+            <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+              <IonRefresherContent>
+              </IonRefresherContent>
+            </IonRefresher>
             <div className="ion-text-center">
               <IonCard>
                 <IonCardHeader>
@@ -305,7 +412,7 @@ const Tab3: React.FC = () => {
 
               <IonSegment scrollable={true} value={selectedOption}>
                 <IonSegmentButton value="duration" onClick={() => setSelectedOption("duration")}>
-                  <IonText color="primary">Duración</IonText>
+                  <IonText color="primary">Duración (horas)</IonText>
                 </IonSegmentButton>
                 <IonSegmentButton value="volume" onClick={() => setSelectedOption("volume")}>
                   <IonText color="primary">Volumen (kgs)</IonText>
@@ -329,11 +436,6 @@ const Tab3: React.FC = () => {
                 ></div>
               </IonText>
 
-
-
-
-
-
               {routines.map((routine) => (
                 <div key={routine.id}>
                   <IonText >
@@ -351,8 +453,8 @@ const Tab3: React.FC = () => {
 
                   {!hiddenRoutines.includes(routine.id) &&
                     routine.workouts
-                      ?.slice() // Crear una copia del array de workouts
-                      .reverse() // Revertir el orden de la copia
+                      ?.slice()
+                      .reverse()
                       .map((workout) => (
                         <IonCard key={workout.id}>
                           <IonCardHeader>
@@ -362,21 +464,46 @@ const Tab3: React.FC = () => {
                               ) : (
                                 <p>Fecha no disponible</p>
                               )}
-                              <IonIcon id={`popover-profile-${workout.id}`} icon={ellipsisHorizontalOutline} color="primary" style={{ marginLeft: '5px', cursor:'pointer' }} />
-                              <IonPopover trigger={`popover-profile-${workout.id}`} dismissOnSelect={true}>
-                                <IonContent>
-                                  <IonList onClick={(e) => handleTrainingDetail(workout.id.toString())}>
-                                    <IonItem button={true} detail={false} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                      Ver Entrenamiento
-                                    </IonItem>
-                                  </IonList>
-                                </IonContent>
-                              </IonPopover>
+                              <IonIcon
+                                id={`actionsheet-profile-${workout.id}`}
+                                icon={ellipsisHorizontalOutline}
+                                color="primary"
+                                style={{ marginLeft: '5px', cursor: 'pointer' }}
+                                onClick={() => openActionSheet(workout.id.toString())}
+                              />
+
+                              <IonActionSheet
+                                id={`actionsheet-${workout.id}`}
+                                isOpen={isActionSheetOpen(workout.id.toString())}
+                                onDidDismiss={() => closeActionSheet(workout.id.toString())}
+                                buttons={[
+                                  {
+                                    text: 'Ver Entrenamiento',
+                                    handler: () => {
+                                      handleTrainingDetail(workout.id.toString());
+                                      closeActionSheet(workout.id.toString());
+                                    },
+                                  },
+                                  {
+                                    text: 'Eliminar Entrenamiento',
+                                    role: 'destructive',
+                                    handler: () => {
+                                      handleDeleteWorkout(workout.id.toString());
+                                    },
+                                  },
+                                  {
+                                    text: 'Cancelar',
+                                    role: 'cancel',
+                                  },
+                                ]}
+                              />
+
+
+
                             </IonCardTitle>
                           </IonCardHeader>
                           <IonCardContent>
                             <IonCardSubtitle>
-                              {/* ... (chips de duración y ejercicios) */}
                             </IonCardSubtitle>
                             <h2>Ejercicios realizados:</h2>
                             {workout.activities.map((activity) => (
@@ -385,7 +512,6 @@ const Tab3: React.FC = () => {
                                   <img alt="Silhouette of mountains" src={require(`../static/images/${activity.exercise?.picture}.jpeg`)} />
                                 </IonAvatar>
                                 <IonLabel>
-                                  {/* Recorremos los ejercicios de la rutina */}
 
                                   <IonText color={'primary'}>
                                     <div style={{ cursor: 'pointer' }} key={activity.exercise.id} onClick={(e) => handleExerciseDetail(activity.exercise.id.toString())}>{activity.exercise.name}</div>
@@ -401,10 +527,66 @@ const Tab3: React.FC = () => {
                   <div className="separator"></div>
                 </div>
               ))}
+              <IonModal ref={modal} id='modal-profile' trigger="open-modal-profile" presentingElement={presentingElement!}>
+                <IonHeader>
+                  <IonToolbar>
+                    <IonTitle>
+                      Ajustes
+
+                    </IonTitle>
+                    <IonButtons slot="end">
+                      <IonButton onClick={() => dismiss()}>Cerrar</IonButton>
+                    </IonButtons>
+                  </IonToolbar>
+                </IonHeader>
+                <IonContent className="ion-padding">
+
+                  <IonCard>
+                    <IonCardContent class='ion-text-center'>
+                      <IonButton onClick={handleEditProfile} fill="clear" >Editar Perfil</IonButton>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard>
+                    <IonCardContent class='ion-text-center'>
+                      <IonButton onClick={handleUpdatePassword} fill="clear" >Actualizar Contraseña</IonButton>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard>
+                    <IonCardContent class='ion-text-center'>
+                      <IonButton onClick={OnLogout} fill="clear" color={'danger'} >Cerrar sesión</IonButton>
+                    </IonCardContent>
+                  </IonCard>
+
+
+                </IonContent>
+              </IonModal>
             </div>
+
+
+            <IonToast
+              isOpen={showSuccessToast}
+              onDidDismiss={() => setShowSuccessToast(false)}
+              message="¡Entrenamiento eliminado con éxito!"
+              color="success"
+              duration={2000}
+              position='top'
+              cssClass="centered-toast"
+            />
+
+            <IonToast
+              isOpen={showErrorToast}
+              onDidDismiss={() => setShowErrorToast(false)}
+              message="Error al eliminar el entrenamiento."
+              color="danger"
+              duration={2000}
+              position='top'
+              cssClass="centered-toast"
+            />
           </IonContent>
+
         </>
-      )}
     </IonPage>
   );
 };

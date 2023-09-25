@@ -25,6 +25,10 @@ const CreateRoutine: React.FC = () => {
   const [showSegmentAlert, setShowSegmentAlert] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleGoBack = () => {
+    history.goBack();
+  };
+
 
   const handleExerciseDetail = (exerciseId: any) => {
     history.push(`/ExerciseDetail/${exerciseId}`);
@@ -99,8 +103,9 @@ const CreateRoutine: React.FC = () => {
           console.log('Rutina creada con éxito');
           console.log(response);
           history.push('/Tab2');
+          setRoutineName('');
+          setSelectedExercises([]);
         } else {
-          // Error al crear la rutina, muestra un mensaje de error
           console.error('Error al crear la rutina');
         }
       })
@@ -148,6 +153,7 @@ const CreateRoutine: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+        <IonButton onClick={handleGoBack} color="medium">Volver</IonButton>
           <IonTitle>Creación de Rutina</IonTitle>
         </IonToolbar>
       </IonHeader>

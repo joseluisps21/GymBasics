@@ -31,6 +31,8 @@ import NotAuthorized from './pages/security/NotAuthorized';
 //Forms
 import RegisterForm from './forms/RegisterForm';
 import LoginForm from './forms/LoginForm';
+import EditPassword from './forms/EditPassword';
+import EditProfile from './forms/EditProfile';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -73,6 +75,8 @@ const App: React.FC = () => {
               <PrivateRoute path="/CreateExercise" component={CreateExercise} />
               <PrivateRoute path="/TrainingDetail/:workoutId" component={TrainingDetail} />
               <PrivateRoute path="/EditRoutine/:routineId" component={EditRoutine} />
+              <PrivateRoute path="/EditProfile" component={EditProfile} />
+              <PrivateRoute path="/EditPassword" component={EditPassword} />
 
 
 
