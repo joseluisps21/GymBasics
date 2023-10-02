@@ -10,6 +10,8 @@ import com.gymbasics.gymbasics.repository.RoutineRepository;
 import com.gymbasics.gymbasics.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -75,6 +77,11 @@ public class ExerciseService {
         exercise.setMuscles(muscles);
 
         return repository.save(exercise);
+    }
+
+    public List<Exercise> findTop3FavoriteExercisesByUsername(String username) {
+        Pageable pageable = PageRequest.of(0, 3);
+        return repository.findTop3FavoriteExercisesByUsername(username, pageable);
     }
 
 }

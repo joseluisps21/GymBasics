@@ -2,16 +2,23 @@ package com.gymbasics.gymbasics.controllers;
 
 import com.gymbasics.gymbasics.DTOs.EditFocusRequest;
 import com.gymbasics.gymbasics.DTOs.EditLevelRequest;
+import com.gymbasics.gymbasics.DTOs.UserPasswordDTO;
+import com.gymbasics.gymbasics.DTOs.UserUpdatedDTO;
 import com.gymbasics.gymbasics.entities.*;
+import com.gymbasics.gymbasics.services.CustomUserDetailsService;
 import com.gymbasics.gymbasics.services.IUserService;
 import com.gymbasics.gymbasics.services.SessionService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +29,9 @@ public class UserController {
     private IUserService service;
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @GetMapping("/api/users")
     public List<User> getAll(){
@@ -70,39 +80,30 @@ public class UserController {
 
     @PostMapping("/api/login")
     @CrossOrigin
-    public ResponseEntity<UserDTO> loginUser(@RequestBody UserCredentials userCredentials) {
+    public ResponseEntity<UserDetails> loginUser(@RequestBody UserCredentials userCredentials) {
         String username = userCredentials.getUsername();
         String password = userCredentials.getPassword();
 
-        // Verificar las credenciales del usuario
-        if (service.authenticate(username, password)) {
-            Optional<User> userOptional = service.getUserByUsername(username);
-
-            // Verificar si el usuario existe en la base de datos
-            User user = userOptional.orElse(null);
-
-            if (user != null) {
+        // Verificar las credenciales del usuario utilizando el CustomUserDetailsService
+        UserDetails userDetails;
+        try {
+            userDetails = customUserDetailsService.loadUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            // Usuario no encontrado
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        if (passwordEncoder.matches(password, userDetails.getPassword())) {
                 // Convertir el objeto User a UserDTO
-                UserDTO userDTO = new UserDTO();
-                userDTO.setId(user.getId());
-                userDTO.setUsername(user.getUsername());
-                userDTO.setEmail(user.getEmail());
-                userDTO.setPlan(user.getWeight());
-                userDTO.setFocus(user.getFocus());
-                userDTO.setLevel(user.getLevel());
-                userDTO.setName(user.getName());
 
                 // Devolver el UserDTO en la respuesta
-                return ResponseEntity.ok(userDTO);
+                return ResponseEntity.ok(userDetails);
             } else {
                 // Usuario no encontrado
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
-        } else {
-            // Las credenciales son inválidas
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-    }
+
+
 
     @GetMapping("api/{username}/routines")
     public ResponseEntity<List<Routine>> getUserRoutinesByUsername(@PathVariable String username) {
@@ -119,6 +120,36 @@ public class UserController {
     public User updateUserFocus(@RequestBody EditFocusRequest request) {
         return service.updateUserFocus(request.getUsername(), request.getFocus());
     }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Inyecta el PasswordEncoder en el controlador
+
+    @PatchMapping("api/{username}/updatePassword")
+    public ResponseEntity<String> updatePassword(
+            @PathVariable String username,
+            @RequestBody UserPasswordDTO userDto
+    ) {
+        try {
+            service.updatePassword(username, userDto, passwordEncoder); // Pasa el PasswordEncoder al servicio
+            return ResponseEntity.ok("contraseña actualizada");
+        } catch (Exception e) {
+            // Manejar excepciones genéricas aquí
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contraseña incorrecta");
+        }
+    }
+
+
+        @PatchMapping("api/edit/{username}")
+        public ResponseEntity<UserUpdatedDTO> updateUser(@PathVariable String username, @RequestBody UserUpdatedDTO userUpdateDTO) {
+            try {
+                service.updateUser(username, userUpdateDTO);
+                return ResponseEntity.ok(userUpdateDTO);
+            } catch (Exception e) {
+                // Manejar excepciones aquí
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        }
+
 
 
 

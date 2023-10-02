@@ -7,6 +7,7 @@ import com.gymbasics.gymbasics.entities.Workout;
 import com.gymbasics.gymbasics.services.RoutineService;
 import com.gymbasics.gymbasics.services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,5 +72,14 @@ public class WorkoutController {
     @GetMapping("api/workoutscount/{username}")
     public int getWorkoutsCountThisMonth(@PathVariable String username) {
         return service.getWorkoutsCountThisMonth(username);
+    }
+    @DeleteMapping("/api/workout/{workoutId}")
+    public ResponseEntity<String> deleteWorkoutById(@PathVariable Long workoutId) {
+        try {
+            service.remove(workoutId);
+            return ResponseEntity.ok("Workout eliminado correctamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar el workout: " + e.getMessage());
+        }
     }
 }

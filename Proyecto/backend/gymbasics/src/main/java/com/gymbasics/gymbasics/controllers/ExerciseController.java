@@ -57,4 +57,10 @@ public class ExerciseController {
                 request.getMuscleIds()
         );
     }
+
+    @GetMapping("api/favorites/{username}")
+    public ResponseEntity<List<Exercise>> getFavoriteExercises(@PathVariable String username) {
+        List<Exercise> favoriteExercises = service.findTop3FavoriteExercisesByUsername(username);
+        return ResponseEntity.ok(favoriteExercises);
+    }
 }
