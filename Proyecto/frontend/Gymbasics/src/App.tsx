@@ -17,8 +17,6 @@ import { barbellOutline, ellipse, homeOutline, personOutline, square, triangle }
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
-import CustomerEdit from './pages/extra/CustomerEdit';
-import Tab4 from './pages/extra/Tab4';
 import CreateRoutine from './pages/CreateRoutine';
 import ExerciseDetail from './pages/ExerciseDetail';
 import CreateExercise from './pages/CreateExercise';
@@ -69,7 +67,6 @@ const App: React.FC = () => {
               
               <PrivateRoute path="/tab2" component={Tab2} />
               <PrivateRoute path="/tab3" component={Tab3} />
-              <PrivateRoute path="/tab4" component={Tab4} />
               <PrivateRoute path="/CreateRoutine" component={CreateRoutine} />
               <PrivateRoute path="/ExerciseDetail/:exerciseId" component={ExerciseDetail} />
               <PrivateRoute path="/CreateExercise" component={CreateExercise} />

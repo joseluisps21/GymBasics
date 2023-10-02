@@ -203,6 +203,8 @@ const Tab1: React.FC = () => {
               <IonButton expand="block" onClick={OnTrain}>Entrenar</IonButton>
             </IonCard>
 
+            <IonButton onClick={OnLogout} fill="clear" color={'danger'} >Cerrar sesión</IonButton>
+
             <IonText style={{ padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <h1 style={{ fontSize: '1.5rem', color: '#c0a656', fontWeight: 'bold', marginBottom: '10px' }}>Ejercicios Favoritos</h1>
               <div
