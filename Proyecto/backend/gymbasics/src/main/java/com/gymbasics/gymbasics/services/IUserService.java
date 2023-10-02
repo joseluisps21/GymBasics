@@ -2,7 +2,6 @@ package com.gymbasics.gymbasics.services;
 
 import com.gymbasics.gymbasics.DTOs.UserPasswordDTO;
 import com.gymbasics.gymbasics.DTOs.UserUpdatedDTO;
-import com.gymbasics.gymbasics.entities.Customer;
 import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
 import org.springframework.security.crypto.password.PasswordEncoder;

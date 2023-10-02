@@ -68,7 +68,6 @@ public class JwtTokenValidationFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    // Implementar los métodos init y destroy (pueden dejarse vacíos)
 }
 
 

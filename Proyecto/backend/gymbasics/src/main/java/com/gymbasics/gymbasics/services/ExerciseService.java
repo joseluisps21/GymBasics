@@ -60,7 +60,6 @@ public class ExerciseService {
                 return repository.findMatchingExercises(user.getLevel(), userFocus);
             }
         } else {
-            // Manejar caso de usuario no encontrado
             return Collections.emptyList();
         }
     }

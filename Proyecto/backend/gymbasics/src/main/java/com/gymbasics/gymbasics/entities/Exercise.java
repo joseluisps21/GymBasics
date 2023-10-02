@@ -48,6 +48,5 @@ public class Exercise {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Activity> activities;
 
-    // Constructor, getters, setters y otros métodos
 }
 

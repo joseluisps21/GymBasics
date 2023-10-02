@@ -51,10 +51,6 @@ const LoginForm: React.FC = () => {
       return;
     }
 
-    if (localStorage.getItem('token') !== null) {
-      setLoggedError(true);
-      return;
-    }
 
     const updatedUser: User = { ...user, password: password };
     console.log(updatedUser);

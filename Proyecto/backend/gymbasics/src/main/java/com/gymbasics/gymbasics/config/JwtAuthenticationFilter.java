@@ -43,7 +43,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
                     )
             );
         } catch (Exception e) {
-            // Agregar un mensaje de log para verificar si hay algún problema con la deserialización
             logger.error("Error al leer datos de inicio de sesión: " + e.getMessage(), e);
             throw e;
         }
