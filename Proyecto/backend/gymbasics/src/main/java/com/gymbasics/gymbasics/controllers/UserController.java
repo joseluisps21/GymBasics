@@ -37,12 +37,6 @@ public class UserController {
     public List<User> getAll(){
         return service.getAll();
     }
-
-    //@GetMapping("/api/users/{id}")
-    //public User getById(@PathVariable String id){
-    //    return service.getById(Long.parseLong(id));
-    //}
-
     @GetMapping("/api/users/{username}")
     public Optional<User> getByUsername(@PathVariable String username){
         return service.getUserByUsername(username);
@@ -97,9 +91,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
-                // Convertir el objeto User a UserDTO
-
-                // Devolver el UserDTO en la respuesta
                 return ResponseEntity.ok(userDetails);
             } else {
                 // Usuario no encontrado

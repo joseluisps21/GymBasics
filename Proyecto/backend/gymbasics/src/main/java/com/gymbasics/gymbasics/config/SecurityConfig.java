@@ -58,12 +58,9 @@ public class SecurityConfig {
         try {
             return new JwtAuthenticationFilter("/api/login", authenticationManager(), jwtUtil);
         } catch (Exception e) {
-            // Manejar la excepción aquí
             throw new RuntimeException("Error al crear JwtAuthenticationFilter.", e);
         }
     }
-
-    // Otros beans y métodos de configuración si es necesario
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -80,7 +77,6 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/register").permitAll()
-                // Permitir acceso a /api/login sin autenticación
                 .anyRequest().authenticated(); // Todas las demás rutas requieren autenticación
 
         http.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -94,7 +90,6 @@ public class SecurityConfig {
         try {
             return new JwtTokenValidationFilter();
         } catch (Exception e) {
-            // Manejar la excepción aquí
             throw new RuntimeException("Error al crear JwtAuthenticationFilter.", e);
         }
     }
