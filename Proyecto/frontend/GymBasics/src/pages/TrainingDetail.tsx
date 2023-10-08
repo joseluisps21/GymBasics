@@ -106,7 +106,7 @@ const TrainingDetail: React.FC = () => {
     workout.activities.forEach((activity) => {
       if (activity.exercise.focus === 'loseweight') {
         activity.results.forEach((result) => {
-          totalDistance += Number(result.attr1); // Suma la distancia en kilómetros
+          totalDistance += Number(result.attr1);
         });
       }
     });

@@ -22,8 +22,6 @@ import {
   IonModal,
   IonPage,
   IonPopover,
-  IonReorder,
-  IonReorderGroup,
   IonRow,
   IonSegment,
   IonText,
@@ -78,6 +76,7 @@ const Tab2: React.FC = () => {
   const [showTimeToast, setShowTimeToast] = useState(false);
   const [showWorkoutSuccessToast, setShowWorkoutSuccessToast] = useState(false);
   const [showCancelTraining, setShowCancelTraining] = useState(false);
+  const [showNumericErrorToast, setShowNumericErrorToast] = useState(false);
 
   const handleDatetimeChange = (event: CustomEvent) => {
     setTempCounter(event.detail.value || '00:00');
@@ -154,7 +153,7 @@ const Tab2: React.FC = () => {
 
   const handleStartOrContinueTraining = async (routineId: number) => {
     if (isTrainingInProgress(routineId)) {
-      // Otro entrenamiento en curso, no hacer nada o mostrar mensaje de error
+      // Otro entrenamiento en curso
     } else {
       // Iniciar el entrenamiento
       setTrainingStatus((prevTrainingStatus) => ({
@@ -179,7 +178,7 @@ const Tab2: React.FC = () => {
   };
 
 
-  const handleFinishTraining = async (routineId: number | any) => {
+  const handleFinishTraining = (routineId: number | any) => {
 
     const now = new Date();
     const currentDate = now.toISOString().slice(0, 10);
@@ -197,18 +196,32 @@ const Tab2: React.FC = () => {
           id: routineId,
         },
       },
-      activities: activities.map((activity) => ({
-        note: activityNotes[activity.id] || activity.note,
+      activities: activities.map((activity, activityIndex) => ({
+        note: activityNotes[activityIndex] || activity.note,
         exercise: {
           id: activity.exercise?.id || 0,
         },
-        results: activity.results.map((result) => ({
+        results: activity.results.map((result, resultIndex) => ({
           serie: result.serie,
-          attr1: tempResultValues[`${activity.id}-${result.id}-attr1`] || result.attr1,
-          attr2: tempResultValues[`${activity.id}-${result.id}-attr2`] || result.attr2,
+          attr1: tempResultValues[`${activityIndex}-${resultIndex}-attr1`] || result.attr1,
+          attr2: tempResultValues[`${activityIndex}-${resultIndex}-attr2`] || result.attr2,
         })),
       })),
     };
+
+    const isResultsValid = newFullWorkout.activities.every((activity) => {
+      return activity.results.every((result) => {
+        const attr1 = parseFloat(result.attr1);
+        const attr2 = parseFloat(result.attr2);
+
+        return !isNaN(attr1) && !isNaN(attr2);
+      });
+    });
+
+    if (!isResultsValid) {
+      setShowNumericErrorToast(true);
+      return;
+    }
 
     setFullWorkout(newFullWorkout);
 
@@ -312,17 +325,22 @@ const Tab2: React.FC = () => {
 
   const handleAddResultRow = (activityIndex: number) => {
     setActivities((prevActivities) => {
-      const updatedActivities = [...prevActivities];
+      // Hacer una copia de las actividades
+      const updatedActivities = JSON.parse(JSON.stringify(prevActivities));
+
       const newResult: Result = {
         id_activity: activityIndex,
         serie: updatedActivities[activityIndex].results.length + 1,
         attr1: '',
         attr2: '',
       };
+
       updatedActivities[activityIndex].results.push(newResult);
+
       return updatedActivities;
     });
   };
+
 
   const handleRemoveResultRow = (activityIndex: number, resultIndex: number) => {
     setActivities((prevActivities) => {
@@ -367,9 +385,6 @@ const Tab2: React.FC = () => {
     setCurrentRoutineId(undefined);
     modal.current?.dismiss();
     setExercises([]);
-
-
-    // Restablecer el contador a '00:00'
     setCounter('00:00');
 
     // Restablecer el estado de trainingStatus para el entrenamiento cancelado
@@ -386,6 +401,10 @@ const Tab2: React.FC = () => {
     setCounter('00:00');
     setShowCancelTraining(true);
   };
+  
+
+
+
 
   return (
     <IonPage>
@@ -427,7 +446,7 @@ const Tab2: React.FC = () => {
                   </div>
                   <div>
 
-                    <IonIcon style={{cursor:'pointer'}} icon={ellipsisHorizontalOutline} color='primary' id={`popover-button-${routine.id}`}>Open Menu</IonIcon>
+                    <IonIcon style={{ cursor: 'pointer' }} icon={ellipsisHorizontalOutline} color='primary' id={`popover-button-${routine.id}`}>Open Menu</IonIcon>
                     <IonPopover trigger={`popover-button-${routine.id}`} dismissOnSelect={true}>
                       <IonContent>
                         <IonList>
@@ -490,12 +509,12 @@ const Tab2: React.FC = () => {
                 <IonCard>
                   <IonCardHeader>
                     <IonCardTitle color={'primary'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{flex:1}}>
-                    <IonAvatar slot="start">
-                        <img src={require(`../static/images/${activity.exercise?.picture}.jpeg`)} />
+                      <div style={{ flex: 1 }}>
+                        <IonAvatar slot="start">
+                          <img src={require(`../static/images/${activity.exercise?.picture}.jpeg`)} />
                         </IonAvatar>
-                        </div>
-                      <div style={{ cursor: 'pointer', flex:10, marginLeft:'10px' ,whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}} onClick={(e) => handleExerciseDetail(activity.exercise.id.toString())}>
+                      </div>
+                      <div style={{ cursor: 'pointer', flex: 10, marginLeft: '10px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={(e) => handleExerciseDetail(activity.exercise.id.toString())}>
                         {activity.exercise?.name}
                       </div>
                     </IonCardTitle>
@@ -529,6 +548,7 @@ const Tab2: React.FC = () => {
                         <IonCol size="3">
                           <IonLabel>{activity.exercise?.focus === 'musclemass' ? 'Reps' : activity.exercise?.focus === 'loseweight' ? 'Km' : 'Attr1'}</IonLabel>
                           <IonInput
+                            type='number'
                             placeholder={activity.exercise?.focus === 'musclemass' ? 'Reps' : activity.exercise?.focus === 'loseweight' ? 'Km' : 'Attr1'}
                             value={tempResultValues[`${activityIndex}-${resultIndex}-attr1`] || result.attr1}
                             onIonChange={(e) => handleResultInputChange(activityIndex, resultIndex, 'attr1', e.detail.value!)}
@@ -537,7 +557,8 @@ const Tab2: React.FC = () => {
                         <IonCol size="3">
                           <IonLabel>{activity.exercise?.focus === 'musclemass' ? 'Kgs' : activity.exercise?.focus === 'loseweight' ? 'Tiempo' : 'Attr2'}</IonLabel>
                           <IonInput
-                            placeholder={activity.exercise?.focus === 'musclemass' ? 'Kgs' : activity.exercise?.focus === 'loseweight' ? 'Tiempo' : 'Attr2'}
+                            type='number'
+                            placeholder={activity.exercise?.focus === 'musclemass' ? 'Kgs' : activity.exercise?.focus === 'loseweight' ? 'Minutos' : 'Attr2'}
                             value={tempResultValues[`${activityIndex}-${resultIndex}-attr2`] || result.attr2}
                             onIonChange={(e) => handleResultInputChange(activityIndex, resultIndex, 'attr2', e.detail.value!)}
                           />
@@ -608,13 +629,13 @@ const Tab2: React.FC = () => {
                 Finalizar Entrenamiento
               </IonButton>
               <div className='ion-text-center'>
-              <IonButton
-              style={{ marginTop: '20px' }}
-                color="medium"
-                onClick={() => handleCancelTraining(currentRoutineId)}
-              >
-                Descartar Entrenamiento
-              </IonButton>
+                <IonButton
+                  style={{ marginTop: '20px' }}
+                  color="medium"
+                  onClick={() => handleCancelTraining(currentRoutineId)}
+                >
+                  Descartar Entrenamiento
+                </IonButton>
               </div>
             </IonContent>
           </IonModal>
@@ -698,7 +719,7 @@ const Tab2: React.FC = () => {
           isOpen={showWorkoutSuccessToast}
           onDidDismiss={() => setShowWorkoutSuccessToast(false)}
           message="¡Entrenamiento completado con éxito!"
-          duration={3000} 
+          duration={3000}
           position="top"
           color="success"
           cssClass="centered-toast"
@@ -708,9 +729,18 @@ const Tab2: React.FC = () => {
           isOpen={showCancelTraining}
           onDidDismiss={() => setShowCancelTraining(false)}
           message="Entrenamiento descartado correctamente"
-          duration={3000} 
+          duration={3000}
           position="top"
           color="medium"
+          cssClass="centered-toast"
+        />
+        <IonToast
+          isOpen={showNumericErrorToast}
+          onDidDismiss={() => setShowNumericErrorToast(false)}
+          message="Introduzca campos numéricos en las series"
+          duration={3000}
+          position="top"
+          color="danger"
           cssClass="centered-toast"
         />
 

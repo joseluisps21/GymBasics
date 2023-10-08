@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonItem, IonList, IonGrid, IonRow, IonCol, IonCheckbox, IonLabel, IonToast, IonIcon } from '@ionic/react';
-import { useState } from 'react';
+import { useState, useRef, createRef, useEffect } from 'react';
 import '../static/css/LoginForm.css';
 import User from '../interfaces/User';
 import { loginUser } from '../apis/UserApi';
@@ -17,7 +17,20 @@ const LoginForm: React.FC = () => {
   const [loggedError, setLoggedError] = useState(false);
   const [invalidCredentialsError, setInvalidCredentialsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const usernameRef = createRef<HTMLIonInputElement>(); 
+  const passwordRef = createRef<HTMLIonInputElement>();
   const { login } = useAuth();
+
+  useEffect(() => {
+    // Verifica si hay valores almacenados en localStorage
+    const savedUser = localStorage.getItem('savedUser');
+    const savedPassword = localStorage.getItem('savedPassword');
+    
+    if (savedUser && savedPassword) {
+      setUser({ username: savedUser });
+      setPassword(savedPassword);
+    }
+  }, []);
 
   const loginUserAPI = async (username: string, password: string) => {
     const response = await loginUser(username, password);
@@ -40,8 +53,13 @@ const LoginForm: React.FC = () => {
       login(token.replace('Bearer ', ''));
     }
 
-
-    resetForm();
+    if (!rememberPassword) {
+      resetForm();
+    } else {
+      // Guarda los valores en localStorage
+      localStorage.setItem('savedUser', username);
+      localStorage.setItem('savedPassword', password);
+    }
     history.push('/tab1');
   };
 
@@ -64,9 +82,21 @@ const LoginForm: React.FC = () => {
     }
   };
 
+
   const resetForm = () => {
     setUser({});
     setPassword('');
+
+    if (usernameRef.current) {
+      usernameRef.current.value = '';
+    }
+    if (passwordRef.current) {
+      passwordRef.current.value = '';
+    }
+    
+    // Elimina los valores del localStorage
+    localStorage.removeItem('savedUser');
+    localStorage.removeItem('savedPassword');
   };
 
   return (
@@ -88,6 +118,7 @@ const LoginForm: React.FC = () => {
               labelPlacement="floating"
               placeholder="Introduce tu usuario"
               style={{ width: '100%' }}
+              ref={usernameRef}
             ></IonInput>
           </IonItem>
 
@@ -100,6 +131,7 @@ const LoginForm: React.FC = () => {
               placeholder="Introduce tu contraseña"
               style={{ width: '100%' }}
               onIonChange={(e) => setPassword(e.detail.value!)}
+              ref={passwordRef}
             ></IonInput>
             <IonButton
               fill="clear"

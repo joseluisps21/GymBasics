@@ -13,6 +13,7 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 import { barbellOutline, ellipse, homeOutline, personOutline, square, triangle } from 'ionicons/icons';
 
+
 //Pages
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
@@ -54,7 +55,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import PrivateRoute from './pages/security/PrivateRoute';
 
 
-setupIonicReact();
+setupIonicReact({
+  mode: 'ios',
+});
 
 const App: React.FC = () => {
   return (

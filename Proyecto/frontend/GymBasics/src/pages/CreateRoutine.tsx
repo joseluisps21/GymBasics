@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { IonAlert, IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCheckbox, IonChip, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonList, IonModal, IonPage, IonSearchbar, IonSegment, IonSegmentButton, IonText, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
-import ExerciseDetail from './ExerciseDetail';
 import { addCircleOutline } from 'ionicons/icons';
 import Exercise from '../interfaces/Exercise';
 import { getExercises, getExercisesByUsername } from '../apis/ExercisesApi';
