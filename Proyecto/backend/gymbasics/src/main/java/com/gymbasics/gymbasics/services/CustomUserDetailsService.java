@@ -22,7 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Obtener el usuario de la base de datos basado en el nombre de usuario
         Optional<User> userOptional = userService.getUserByUsername(username);
 
         if (!userOptional.isPresent()) {
@@ -31,7 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         User user = userOptional.get();
 
-        // Crear y devolver una implementación de UserDetails basada en la entidad User
         return user;
     }
 }

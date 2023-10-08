@@ -54,7 +54,6 @@ public class RoutineService {
     public Routine createRoutineWithExercises(RoutineDTO request) {
         User user = userRepository.findUserByUsername(request.getUsername());
         if (user == null) {
-            // Manejar caso de usuario no encontrado
             return null;
         }
 

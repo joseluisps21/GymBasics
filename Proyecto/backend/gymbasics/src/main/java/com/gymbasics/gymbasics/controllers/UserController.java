@@ -69,6 +69,10 @@ public class UserController {
                 return ResponseEntity.badRequest().body("El nombre de usuario ya existe, escoge otro");
             }
 
+            if (user.getPassword().length()<4){
+                return ResponseEntity.badRequest().body("La contraseña debe tener al menos 4 caracteres");
+            }
+
             service.save(user);
             return ResponseEntity.ok("Usuario creado de forma exitosa");
         } catch (DataIntegrityViolationException e) {
@@ -122,7 +126,7 @@ public class UserController {
     }
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Inyecta el PasswordEncoder en el controlador
+    private PasswordEncoder passwordEncoder;
 
     @PatchMapping("api/{username}/updatePassword")
     public ResponseEntity<String> updatePassword(
@@ -133,7 +137,7 @@ public class UserController {
             service.updatePassword(username, userDto, passwordEncoder); // Pasa el PasswordEncoder al servicio
             return ResponseEntity.ok("contraseña actualizada");
         } catch (Exception e) {
-            // Manejar excepciones genéricas aquí
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contraseña incorrecta");
         }
     }
@@ -145,7 +149,6 @@ public class UserController {
                 service.updateUser(username, userUpdateDTO);
                 return ResponseEntity.ok(userUpdateDTO);
             } catch (Exception e) {
-                // Manejar excepciones aquí
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
         }

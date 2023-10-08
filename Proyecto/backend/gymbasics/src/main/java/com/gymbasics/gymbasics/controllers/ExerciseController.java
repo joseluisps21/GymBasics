@@ -40,7 +40,6 @@ public class ExerciseController {
         List<Exercise> matchingExercises = service.getMatchingExercisesForUsername(username);
 
         if (matchingExercises.isEmpty()) {
-            // Manejar caso de ejercicios no encontrados
             return ResponseEntity.notFound().build();
         }
 

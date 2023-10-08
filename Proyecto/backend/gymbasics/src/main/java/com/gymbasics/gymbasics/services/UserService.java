@@ -2,7 +2,6 @@ package com.gymbasics.gymbasics.services;
 
 import com.gymbasics.gymbasics.DTOs.UserPasswordDTO;
 import com.gymbasics.gymbasics.DTOs.UserUpdatedDTO;
-import com.gymbasics.gymbasics.entities.Customer;
 import com.gymbasics.gymbasics.entities.Routine;
 import com.gymbasics.gymbasics.entities.User;
 import com.gymbasics.gymbasics.repository.UserRepository;
@@ -52,20 +51,17 @@ public class UserService implements IUserService {
     }
 
     public boolean authenticate(String username, String password) {
-        // Obtener el usuario de la base de datos basado en el nombre de usuario
         Optional<User> userOptional = repository.findByUsername(username);
 
-        // Verificar si el usuario existe y las credenciales coinciden
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            // Verificar la contraseña
             if (user.getPassword().equals(password)) {
-                return true;  // Credenciales válidas
+                return true;
             }
         }
 
-        return false;  // Credenciales inválidas
+        return false;
     }
 
     public Optional<User> getUserByUsername(String username){
@@ -77,7 +73,7 @@ public class UserService implements IUserService {
         Optional<User> userOptional = repository.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            return user.getRoutines(); // Obtiene la lista de rutinas desde la entidad User
+            return user.getRoutines();
         }
         return Collections.emptyList();
     }
@@ -112,28 +108,23 @@ public class UserService implements IUserService {
             throw new RuntimeException("Contraseña actual incorrecta");
         }
 
-        // Actualizar la contraseña
-        //String newPasswordEncoded = passwordEncoder.encode(userDto.getNewPassword());
         user.setPassword(userDto.getNewPassword());
         repository.save(user);
     }
 
     public void updateUser(String username, UserUpdatedDTO userUpdateDTO) {
-        // Obtener el usuario de la base de datos
         User user = repository.findUserByUsername(username);
 
         if (user == null) {
             throw new RuntimeException("Usuario no encontrado");
         }
 
-        // Actualizar los campos del usuario con los valores proporcionados en userUpdateDTO
         user.setName(userUpdateDTO.getName());
         user.setEmail(userUpdateDTO.getEmail());
         user.setLevel(userUpdateDTO.getLevel());
         user.setFocus(userUpdateDTO.getFocus());
         user.setWeight(userUpdateDTO.getWeight());
 
-        // Guardar los cambios en la base de datos
         repository.save(user);
     }
 }

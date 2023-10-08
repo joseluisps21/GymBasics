@@ -55,7 +55,6 @@ public class WorkoutController {
         List<Workout> userWorkouts = service.getWorkoutsForUsername(username);
 
         if (userWorkouts.isEmpty()) {
-            // Manejar caso de workouts no encontrados
             return ResponseEntity.notFound().build();
         }
 

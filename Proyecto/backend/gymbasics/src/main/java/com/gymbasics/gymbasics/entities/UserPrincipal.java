@@ -23,13 +23,11 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        // Devolver la contraseña del usuario
         return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        // Devolver el nombre de usuario del usuario
         return user.getUsername();
     }
 
@@ -37,25 +35,21 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        // Implementa este método para verificar si la cuenta del usuario no ha expirado
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // Implementa este método para verificar si la cuenta del usuario no está bloqueada
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // Implementa este método para verificar si las credenciales del usuario no han expirado
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        // Implementa este método para verificar si el usuario está habilitado
         return true;
     }
 }
