@@ -58,7 +58,6 @@ const CreateExercise: React.FC = () => {
     };
 
     useEffect(() => {
-        // Obtener la lista de músculos al cargar el componente
         async function fetchMuscles() {
             try {
                 const response = await getMuscles();

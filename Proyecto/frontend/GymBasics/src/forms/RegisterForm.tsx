@@ -163,6 +163,7 @@ const RegisterForm: React.FC = () => {
               labelPlacement="floating"
               placeholder="Introduce tu Peso Corporal"
               required
+              type="number"
               style={{ width: '100%' }}
               onIonChange={(e) => setUser({ ...user, weight: e.detail.value! })}
             ></IonInput>

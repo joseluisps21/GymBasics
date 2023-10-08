@@ -67,7 +67,6 @@ const Tab3: React.FC = () => {
       console.error('Error al eliminar el entrenamiento.', error);
       setShowErrorToast(true);
     } finally {
-      // Cierra el Action Sheet después de eliminar el entrenamiento
       closeActionSheet(workoutId);
     }
   };
@@ -141,7 +140,7 @@ const Tab3: React.FC = () => {
   const calculateMonthlyVolumes = (routines: RoutineResponse[]) => {
     const monthlyVolumes: number[] = new Array(12).fill(0);
     const currentYear = new Date().getFullYear();
-
+  
     routines.forEach((routine) => {
       routine.workouts?.forEach((workout) => {
         const workoutYear = new Date(workout.date).getFullYear();
@@ -150,23 +149,28 @@ const Tab3: React.FC = () => {
           const activityVolume = exerciseResults.reduce((total: number, result: any) => {
             const attr1Value = parseFloat(result.attr1);
             const attr2Value = parseFloat(result.attr2);
-
+  
             if (!isNaN(attr1Value) && !isNaN(attr2Value)) {
-              const volume = attr1Value * attr2Value;
+              // Convierte los valores a números redondeados a 2 decimales
+              const roundedAttr1 = parseFloat(attr1Value.toFixed(2));
+              const roundedAttr2 = parseFloat(attr2Value.toFixed(2));
+  
+              const volume = roundedAttr1 * roundedAttr2;
               return total + volume;
             }
-
+  
             return total;
           }, 0);
-
+  
           const month = new Date(workout.date).getMonth();
           monthlyVolumes[month] += activityVolume;
         }
       });
     });
-
+  
     return monthlyVolumes;
   };
+  
 
   const calculateTotalDurationByMonth = (routines: RoutineResponse[]) => {
     const totalDurationByMonth: number[] = new Array(12).fill(0);

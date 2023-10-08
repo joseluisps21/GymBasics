@@ -5,7 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle } from '@ionic/react';
 import { getUserByUsername } from '../apis/UserApi';
 import UserAuth from '../interfaces/UserAuth';
-import { balloonOutline, barbellOutline, flameOutline, flashOutline, medalOutline, pin, rocketOutline } from 'ionicons/icons';
 import '../static/css/ExerciseDetail.css'
 import ReactApexChart from 'react-apexcharts';
 import { getExerciseById } from '../apis/ExercisesApi';
@@ -13,7 +12,6 @@ import Exercise from '../interfaces/Exercise';
 import { getIconBasedOnLevel } from '../components/LevelChange';
 import { getIconBasedOnFocus } from '../components/FocusChange';
 import { getWorkoutsByUsernameAndExerciseId } from '../apis/WorkoutApi';
-import exerciseImages from '../components/ExerciseImages';
 
 
 const ExerciseDetail: React.FC = () => {
@@ -65,7 +63,8 @@ const ExerciseDetail: React.FC = () => {
             return activityVolume;
         });
 
-        const maxTotalVolume = Math.max(...volumes);
+        const maxTotalVolume = volumes.length > 0 ? Math.max(...volumes) : 0;
+
 
 
         return {
@@ -393,7 +392,7 @@ const ExerciseDetail: React.FC = () => {
                                     </IonCol>
                                     <IonCol size="6" className="ion-text-end">
                                         <IonBadge color="success">
-                                            {exerciseStats?.maxWeight} {exercise?.focus === 'loseweight' ? 'min' : 'kgs'}
+                                            {exerciseStats?.maxWeight} {exercise?.focus === 'loseweight' ? 'Min' : 'Kgs'}
                                         </IonBadge>
                                     </IonCol>
                                 </IonRow>
@@ -404,7 +403,7 @@ const ExerciseDetail: React.FC = () => {
                                     </IonCol>
                                     <IonCol size="6" className="ion-text-end">
                                         <IonBadge color="secondary">
-                                            {exerciseStats?.maxReps} {exercise?.focus === 'loseweight' ? 'km' : ''}
+                                            {exerciseStats?.maxReps} {exercise?.focus === 'loseweight' ? 'Km' : ''}
                                         </IonBadge>
                                     </IonCol>
                                 </IonRow>

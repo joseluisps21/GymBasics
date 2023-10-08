@@ -1,4 +1,3 @@
-import Exercise from "./Exercise";
 import Result from "./Result";
 
 export default interface Activity {

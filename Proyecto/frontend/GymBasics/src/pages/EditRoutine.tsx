@@ -9,7 +9,6 @@ import { getExercises, getExercisesByUsername } from '../apis/ExercisesApi';
 import { getIconBasedOnLevel } from '../components/LevelChange';
 import { getIconBasedOnFocus } from '../components/FocusChange';
 import { useAuth } from '../contexts/AuthContext';
-import FullRoutine from '../interfaces/FullRoutine';
 import { getRoutinesById, saveRoutine, updateRoutine } from '../apis/RoutinesApi';
 import UpdatedRoutine from '../interfaces/UpdatedRoutine';
 
@@ -54,8 +53,8 @@ const EditRoutine: React.FC = () => {
               routineName: response.name,
               exercises: response.exercises,
             });
-            setSelectedExercises(response.exercises); // Preselecciona los ejercicios
-            setRoutineName(response.name); // Establece el nombre de la rutina
+            setSelectedExercises(response.exercises); 
+            setRoutineName(response.name); 
             console.log(selectedExercises)
           }
         })
@@ -121,7 +120,7 @@ const EditRoutine: React.FC = () => {
   }
 
   const handleUpdateFields = () => {
-    const updatedRoutineName = routineName.trim(); //eliminamos espacios en blanco extras
+    const updatedRoutineName = routineName.trim();
 
     
     handleEditRoutine(updatedRoutineName);

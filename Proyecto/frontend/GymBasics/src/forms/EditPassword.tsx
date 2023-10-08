@@ -17,7 +17,6 @@ import {
 } from "@ionic/react";
 import { eye, eyeOff } from "ionicons/icons";
 import bcrypt from 'bcryptjs';
-import UserPassword from "../interfaces/UserPassword";
 import { updatePassword } from "../apis/UserApi";
 import { useAuth } from "../contexts/AuthContext";
 import { useHistory } from "react-router";
